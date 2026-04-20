@@ -1600,21 +1600,72 @@ function addEmployee() {
 }
 
 // Payroll run trigger
-function triggerRun(btn) {
-  btn.textContent = '⟳ Signing batch...';
-  btn.style.background = 'rgba(79,255,176,0.15)';
-  btn.style.color = 'var(--accent)';
-  btn.style.border = '1px solid rgba(79,255,176,0.3)';
-  setTimeout(() => {
-    btn.textContent = '✓ Payroll Submitted to Arc';
-    btn.style.background = 'rgba(79,255,176,0.1)';
+async function triggerRun(btn) {
+  if (typeof window.ethereum === 'undefined') {
+    alert('Please install MetaMask first');
+    return;
+  }
+
+  try {
+    // Make sure they're connected
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const sender = accounts[0];
+
+    btn.textContent = '⟳ Waiting for MetaMask...';
+    btn.style.opacity = '0.7';
+
+    // USDC contract on Arc Testnet
+    const USDC_CONTRACT = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
+    
+    // Test recipient — replace with a real wallet for live testing
+    const RECIPIENT = '0x000000000000000000000000000000000000dEaD';
+    
+    // Send 0.01 USDC as a test (in hex, 6 decimals)
+    // 0.01 USDC = 10000 in raw units
+    const amount = '0x2710';
+
+    // ERC20 transfer function call
+    const data = '0xa9059cbb' +
+      RECIPIENT.replace('0x', '').padStart(64, '0') +
+      amount.replace('0x', '').padStart(64, '0');
+
+    const txHash = await window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [{
+        from: sender,
+        to: USDC_CONTRACT,
+        data: data,
+        chainId: '0x4CE752' // Arc Testnet
+      }]
+    });
+
+    btn.textContent = '✓ TX Submitted!';
+    btn.style.opacity = '1';
+    btn.style.background = 'rgba(79,255,176,0.15)';
+    btn.style.color = 'var(--accent)';
+    btn.style.border = '1px solid rgba(79,255,176,0.3)';
+
+    // Show explorer link
+    const msg = document.createElement('div');
+    msg.style.cssText = 'text-align:center;margin-top:10px;font-size:12px;font-family:"DM Mono",monospace;';
+    msg.innerHTML = `TX sent → <a href="https://testnet.arcscan.app/tx/${txHash}" target="_blank" style="color:var(--accent2)">View on ArcScan ↗</a>`;
+    btn.parentNode.appendChild(msg);
+
     setTimeout(() => {
       btn.textContent = 'Run Payroll — $284,910 USDC →';
       btn.style.background = '';
       btn.style.color = '';
       btn.style.border = '';
+    }, 5000);
+
+  } catch(e) {
+    btn.textContent = 'Transaction rejected';
+    btn.style.opacity = '1';
+    setTimeout(() => {
+      btn.textContent = 'Run Payroll — $284,910 USDC →';
     }, 3000);
-  }, 1500);
+    console.error(e);
+  }
 }
 
 // FX rate ticker — subtle live updates
