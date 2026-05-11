@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ArcPay — Stablecoin Payroll Protocol</title>
+<title>Settlo — Stablecoin Payroll Protocol</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Cabinet+Grotesk:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 <style>
@@ -28,9 +28,7 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
-
   body {
     background: var(--bg);
     color: var(--text);
@@ -40,529 +38,225 @@
     cursor: none;
   }
 
-  /* Custom cursor */
   .cursor {
-    position: fixed;
-    width: 10px; height: 10px;
-    background: var(--accent);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
+    position: fixed; width: 10px; height: 10px;
+    background: var(--accent); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
     transform: translate(-50%, -50%);
     transition: width .2s, height .2s, opacity .2s;
     mix-blend-mode: screen;
   }
   .cursor-ring {
-    position: fixed;
-    width: 36px; height: 36px;
-    border: 1px solid rgba(79,255,176,0.4);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
+    position: fixed; width: 36px; height: 36px;
+    border: 1px solid rgba(79,255,176,0.4); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
     transform: translate(-50%, -50%);
     transition: all .12s ease-out;
   }
   body:has(button:hover) .cursor, body:has(a:hover) .cursor { width: 20px; height: 20px; }
   body:has(button:hover) .cursor-ring, body:has(a:hover) .cursor-ring { width: 56px; height: 56px; border-color: var(--accent); }
 
-  /* Noise overlay */
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9997;
-    opacity: 0.6;
+    pointer-events: none; z-index: 9997; opacity: 0.6;
   }
 
-  /* Grid bg */
   .grid-bg {
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-image:
       linear-gradient(rgba(79,255,176,0.025) 1px, transparent 1px),
       linear-gradient(90deg, rgba(79,255,176,0.025) 1px, transparent 1px);
     background-size: 48px 48px;
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
 
-  /* Glow orbs */
   .orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(100px);
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.18;
+    position: fixed; border-radius: 50%; filter: blur(100px);
+    pointer-events: none; z-index: 0; opacity: 0.18;
     animation: orbFloat 12s ease-in-out infinite alternate;
   }
-  .orb-1 { width: 600px; height: 600px; background: var(--accent3); top: -200px; left: -200px; animation-delay: 0s; }
+  .orb-1 { width: 600px; height: 600px; background: var(--accent3); top: -200px; left: -200px; }
   .orb-2 { width: 500px; height: 500px; background: var(--accent2); bottom: -100px; right: -100px; animation-delay: -4s; }
   .orb-3 { width: 400px; height: 400px; background: var(--accent); top: 40%; left: 50%; transform: translateX(-50%); opacity: 0.07; animation-delay: -8s; }
 
   @keyframes orbFloat {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(30px, -40px) scale(1.08); }
+    0% { transform: translate(0,0) scale(1); }
+    100% { transform: translate(30px,-40px) scale(1.08); }
   }
 
-  /* Layout */
   .wrapper { position: relative; z-index: 1; }
 
-  /* NAV */
   nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     padding: 20px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1px solid transparent;
-    transition: all 0.4s;
-    backdrop-filter: blur(0px);
+    transition: all 0.4s; backdrop-filter: blur(0px);
   }
   nav.scrolled {
     background: rgba(8,10,14,0.85);
     border-bottom-color: var(--border);
-    backdrop-filter: blur(24px);
-    padding: 14px 40px;
+    backdrop-filter: blur(24px); padding: 14px 40px;
   }
   .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 20px;
-    letter-spacing: -0.5px;
-    text-decoration: none;
-    color: var(--text);
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px;
+    letter-spacing: -1px; text-decoration: none; color: var(--text);
+    background: linear-gradient(135deg, #fff 40%, rgba(79,255,176,0.85));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
   .logo-mark {
     width: 36px; height: 36px;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-    font-weight: 800;
-    color: #080a0e;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800; color: #080a0e;
   }
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    list-style: none;
-  }
-  .nav-links a {
-    color: var(--text2);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    transition: color 0.2s;
-  }
+  .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+  .nav-links a { color: var(--text2); text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: 0.02em; transition: color 0.2s; }
   .nav-links a:hover { color: var(--text); }
   .nav-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(79,255,176,0.1);
-    border: 1px solid rgba(79,255,176,0.2);
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--accent);
-    font-family: 'DM Mono', monospace;
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(79,255,176,0.1); border: 1px solid rgba(79,255,176,0.2);
+    border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600;
+    color: var(--accent); font-family: 'DM Mono', monospace;
   }
   .pulse-dot {
-    width: 6px; height: 6px;
-    background: var(--accent);
-    border-radius: 50%;
+    width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
     animation: pulse 2s ease-in-out infinite;
   }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
-  }
+  @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(0.8); } }
+
   .btn-connect {
-    background: var(--accent);
-    color: #080a0e;
-    border: none;
-    padding: 10px 22px;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: none;
-    transition: all 0.2s;
-    font-family: 'Cabinet Grotesk', sans-serif;
-    letter-spacing: 0.01em;
+    background: var(--accent); color: #080a0e; border: none;
+    padding: 10px 22px; border-radius: 10px; font-weight: 700; font-size: 14px;
+    cursor: none; transition: all 0.2s; font-family: 'Cabinet Grotesk', sans-serif;
   }
   .btn-connect:hover { background: #6fffbe; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(79,255,176,0.25); }
 
-  /* HERO */
   .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 120px 40px 80px;
-    position: relative;
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 120px 40px 80px; position: relative;
   }
   .hero-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(123,97,255,0.12);
-    border: 1px solid rgba(123,97,255,0.3);
-    border-radius: 20px;
-    padding: 6px 16px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #a98fff;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 32px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(123,97,255,0.12); border: 1px solid rgba(123,97,255,0.3);
+    border-radius: 20px; padding: 6px 16px; font-size: 12px; font-weight: 600;
+    color: #a98fff; letter-spacing: 0.08em; text-transform: uppercase;
+    font-family: 'DM Mono', monospace; margin-bottom: 32px;
     animation: fadeUp 0.8s ease both;
   }
   .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(52px, 7vw, 96px);
-    font-weight: 800;
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    margin-bottom: 28px;
-    animation: fadeUp 0.8s 0.1s ease both;
-    max-width: 900px;
+    font-family: 'Syne', sans-serif; font-size: clamp(52px,7vw,96px);
+    font-weight: 800; line-height: 0.95; letter-spacing: -0.03em;
+    margin-bottom: 28px; animation: fadeUp 0.8s 0.1s ease both; max-width: 900px;
   }
   .hero h1 .grad {
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--accent3) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-  .hero-sub {
-    font-size: 18px;
-    color: var(--text2);
-    max-width: 540px;
-    line-height: 1.6;
-    margin-bottom: 48px;
-    animation: fadeUp 0.8s 0.2s ease both;
-    font-weight: 400;
-  }
-  .hero-cta {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    animation: fadeUp 0.8s 0.3s ease both;
-    flex-wrap: wrap;
-  }
+  .hero-sub { font-size: 18px; color: var(--text2); max-width: 540px; line-height: 1.6; margin-bottom: 48px; animation: fadeUp 0.8s 0.2s ease both; }
+  .hero-cta { display: flex; gap: 14px; justify-content: center; animation: fadeUp 0.8s 0.3s ease both; flex-wrap: wrap; }
   .btn-primary {
-    background: linear-gradient(135deg, var(--accent), #00e5a0);
-    color: #080a0e;
-    border: none;
-    padding: 16px 36px;
-    border-radius: 12px;
-    font-weight: 800;
-    font-size: 15px;
-    cursor: none;
-    transition: all 0.25s;
-    font-family: 'Cabinet Grotesk', sans-serif;
-    letter-spacing: -0.01em;
-    position: relative;
-    overflow: hidden;
-  }
-  .btn-primary::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
-    opacity: 0;
-    transition: opacity 0.2s;
+    background: linear-gradient(135deg, var(--accent), #00e5a0); color: #080a0e; border: none;
+    padding: 16px 36px; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: none;
+    transition: all 0.25s; font-family: 'Cabinet Grotesk', sans-serif; position: relative; overflow: hidden;
   }
   .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(79,255,176,0.3); }
-  .btn-primary:hover::before { opacity: 1; }
   .btn-ghost {
-    background: transparent;
-    color: var(--text);
-    border: 1px solid var(--border-bright);
-    padding: 16px 36px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 15px;
-    cursor: none;
-    transition: all 0.25s;
-    font-family: 'Cabinet Grotesk', sans-serif;
-    backdrop-filter: blur(8px);
+    background: transparent; color: var(--text); border: 1px solid var(--border-bright);
+    padding: 16px 36px; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: none;
+    transition: all 0.25s; font-family: 'Cabinet Grotesk', sans-serif; backdrop-filter: blur(8px);
   }
   .btn-ghost:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.04); transform: translateY(-2px); }
 
-  .hero-stats {
-    display: flex;
-    gap: 48px;
-    margin-top: 80px;
-    animation: fadeUp 0.8s 0.5s ease both;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+  .hero-stats { display: flex; gap: 48px; margin-top: 80px; animation: fadeUp 0.8s 0.5s ease both; flex-wrap: wrap; justify-content: center; }
   .hero-stat { text-align: center; }
   .hero-stat .val {
-    font-family: 'Syne', sans-serif;
-    font-size: 36px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -0.02em;
     background: linear-gradient(135deg, var(--text), var(--text2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-  .hero-stat .lbl {
-    font-size: 13px;
-    color: var(--text3);
-    margin-top: 4px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
+  .hero-stat .lbl { font-size: 13px; color: var(--text3); margin-top: 4px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
   .stat-div { width: 1px; background: var(--border); }
 
   .hero-scroll {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    color: var(--text3);
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    animation: fadeIn 1s 1s ease both;
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--text3); font-size: 11px; font-family: 'DM Mono', monospace;
+    letter-spacing: 0.1em; text-transform: uppercase; animation: fadeIn 1s 1s ease both;
   }
-  .scroll-line {
-    width: 1px;
-    height: 40px;
-    background: linear-gradient(to bottom, var(--text3), transparent);
-    animation: scrollPulse 2s ease-in-out infinite;
-  }
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.4; transform: scaleY(1); }
-    50% { opacity: 1; transform: scaleY(0.6); }
-  }
+  .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--text3), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+  @keyframes scrollPulse { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
 
-  /* MAIN APP SECTION */
-  .app-section {
-    padding: 80px 40px 120px;
-    max-width: 1320px;
-    margin: 0 auto;
-  }
+  .app-section { padding: 80px 40px 120px; max-width: 1320px; margin: 0 auto; }
+  .section-label { display: flex; align-items: center; gap: 12px; margin-bottom: 48px; }
+  .section-label span { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); letter-spacing: 0.15em; text-transform: uppercase; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  .section-label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 48px;
-  }
-  .section-label span {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text3);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
+  .dashboard { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 
-  /* Dashboard grid */
-  .dashboard {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto;
-    gap: 16px;
-  }
-
-  /* CARD BASE */
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 28px;
-    position: relative;
-    overflow: hidden;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px; position: relative; overflow: hidden;
     transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
   }
-  .card:hover {
-    border-color: var(--border-bright);
-    transform: translateY(-2px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-  }
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at top left, rgba(79,255,176,0.04), transparent 60%);
-    pointer-events: none;
-  }
+  .card:hover { border-color: var(--border-bright); transform: translateY(-2px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+  .card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top left, rgba(79,255,176,0.04), transparent 60%); pointer-events: none; }
 
-  /* KPI CARDS */
-  .kpi-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 16px;
-  }
+  .kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 16px; }
   .kpi-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; position: relative; overflow: hidden; transition: all 0.3s;
   }
   .kpi-card:hover { border-color: var(--border-bright); transform: translateY(-2px); }
-  .kpi-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2px;
-    border-radius: 2px;
-  }
+  .kpi-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; border-radius: 2px; }
   .kpi-card.green::after { background: linear-gradient(90deg, var(--accent), transparent); }
   .kpi-card.blue::after { background: linear-gradient(90deg, var(--accent2), transparent); }
   .kpi-card.purple::after { background: linear-gradient(90deg, var(--accent3), transparent); }
   .kpi-card.gold::after { background: linear-gradient(90deg, var(--gold), transparent); }
 
-  .kpi-label {
-    font-size: 12px;
-    color: var(--text3);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-weight: 600;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .kpi-icon {
-    width: 28px; height: 28px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px;
-  }
+  .kpi-label { font-size: 12px; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .kpi-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
   .kpi-icon.g { background: rgba(79,255,176,0.1); }
   .kpi-icon.b { background: rgba(0,212,255,0.1); }
   .kpi-icon.p { background: rgba(123,97,255,0.1); }
   .kpi-icon.go { background: rgba(245,200,66,0.1); }
-
-  .kpi-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1;
-    margin-bottom: 8px;
-  }
-  .kpi-change {
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
+  .kpi-value { font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; margin-bottom: 8px; }
+  .kpi-change { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
   .kpi-change.up { color: var(--accent); }
   .kpi-change.neutral { color: var(--text3); }
 
-  /* MAIN PANELS */
   .panel-wide { grid-column: span 2; }
   .panel-full { grid-column: span 3; }
 
-  /* Payroll run card */
-  .payroll-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 28px;
-  }
-  .payroll-header h3 {
-    font-family: 'Syne', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
-  .btn-sm {
-    padding: 8px 18px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: none;
-    border: none;
-    font-family: 'Cabinet Grotesk', sans-serif;
-    transition: all 0.2s;
-  }
+  .payroll-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+  .payroll-header h3 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+
+  .btn-sm { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: none; border: none; font-family: 'Cabinet Grotesk', sans-serif; transition: all 0.2s; }
   .btn-sm.primary { background: var(--accent); color: #080a0e; }
   .btn-sm.primary:hover { background: #6fffbe; transform: translateY(-1px); }
   .btn-sm.ghost { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid var(--border); }
   .btn-sm.ghost:hover { background: rgba(255,255,255,0.08); color: var(--text); }
-  .btn-sm.danger { background: rgba(255,107,53,0.12); color: var(--warn); border: 1px solid rgba(255,107,53,0.2); }
+  .btn-sm.danger { background: rgba(255,107,53,0.08); color: var(--warn); border: 1px solid rgba(255,107,53,0.18); }
+  .btn-sm.danger:hover { background: rgba(255,107,53,0.18); border-color: rgba(255,107,53,0.35); transform: translateY(-1px); }
+  .emp-actions { display: flex; gap: 6px; align-items: center; }
 
-  /* Employee table */
   .emp-table { width: 100%; border-collapse: collapse; }
-  .emp-table th {
-    text-align: left;
-    font-size: 11px;
-    color: var(--text3);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0 12px 16px;
-    font-weight: 600;
-    border-bottom: 1px solid var(--border);
-  }
-  .emp-table td {
-    padding: 16px 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-    font-size: 14px;
-    vertical-align: middle;
-  }
+  .emp-table th { text-align: left; font-size: 11px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; padding: 0 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); }
+  .emp-table td { padding: 16px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px; vertical-align: middle; }
   .emp-table tr:last-child td { border-bottom: none; }
   .emp-table tr { transition: background 0.15s; }
   .emp-table tr:hover td { background: rgba(255,255,255,0.02); }
 
-  .emp-avatar {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700;
-    font-size: 14px;
-  }
+  .emp-avatar { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
   .emp-info { display: flex; align-items: center; gap: 12px; }
   .emp-name { font-weight: 600; font-size: 14px; }
   .emp-role { font-size: 12px; color: var(--text3); margin-top: 2px; }
 
-  .tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    font-family: 'DM Mono', monospace;
-  }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
   .tag.usdc { background: rgba(0,212,255,0.1); color: var(--accent2); border: 1px solid rgba(0,212,255,0.15); }
   .tag.eurc { background: rgba(123,97,255,0.1); color: #a98fff; border: 1px solid rgba(123,97,255,0.15); }
   .tag.jpyc { background: rgba(245,200,66,0.1); color: var(--gold); border: 1px solid rgba(245,200,66,0.15); }
@@ -571,381 +265,133 @@
   .tag.pending { background: rgba(245,200,66,0.08); color: var(--gold); }
   .tag.processing { background: rgba(0,212,255,0.08); color: var(--accent2); }
 
-  .amount-cell {
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    font-weight: 500;
-  }
+  .amount-cell { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; }
   .amount-main { color: var(--text); }
   .amount-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
 
-  /* FX PANEL */
   .fx-list { display: flex; flex-direction: column; gap: 12px; }
-  .fx-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    background: var(--bg3);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    transition: all 0.2s;
-  }
+  .fx-row { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--bg3); border-radius: 12px; border: 1px solid var(--border); transition: all 0.2s; }
   .fx-row:hover { border-color: var(--border-bright); background: var(--surface2); }
-  .fx-pair {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .fx-flags {
-    display: flex;
-    font-size: 20px;
-  }
+  .fx-pair { display: flex; align-items: center; gap: 10px; }
+  .fx-flags { display: flex; font-size: 20px; }
   .fx-label { font-weight: 700; font-size: 14px; }
   .fx-sublabel { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; }
-  .fx-rate {
-    text-align: right;
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    font-weight: 500;
-  }
+  .fx-rate { text-align: right; font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; }
   .fx-rate-main { color: var(--text); }
   .fx-rate-change { font-size: 11px; margin-top: 2px; }
 
-  /* SEND PAYROLL FORM */
   .send-form { display: flex; flex-direction: column; gap: 16px; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .form-group { display: flex; flex-direction: column; gap: 8px; }
-  .form-label {
-    font-size: 12px;
-    color: var(--text3);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-weight: 600;
-  }
-  .form-input {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 16px;
-    color: var(--text);
-    font-size: 14px;
-    font-family: 'Cabinet Grotesk', sans-serif;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
-    cursor: none;
-  }
-  .form-input:focus {
-    border-color: rgba(79,255,176,0.4);
-    box-shadow: 0 0 0 3px rgba(79,255,176,0.06);
-  }
+  .form-label { font-size: 12px; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+  .form-input { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text); font-size: 14px; font-family: 'Cabinet Grotesk', sans-serif; transition: border-color 0.2s, box-shadow 0.2s; outline: none; cursor: none; }
+  .form-input:focus { border-color: rgba(79,255,176,0.4); box-shadow: 0 0 0 3px rgba(79,255,176,0.06); }
   .form-input::placeholder { color: var(--text3); }
-  .form-select {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 16px;
-    color: var(--text);
-    font-size: 14px;
-    font-family: 'Cabinet Grotesk', sans-serif;
-    outline: none;
-    cursor: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5268' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    transition: border-color 0.2s;
-  }
+  .form-select { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text); font-size: 14px; font-family: 'Cabinet Grotesk', sans-serif; outline: none; cursor: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5268' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; transition: border-color 0.2s; }
   .form-select:focus { border-color: rgba(79,255,176,0.4); }
   select option { background: var(--surface); }
 
-  /* FX preview box */
-  .fx-preview {
-    background: var(--bg3);
-    border: 1px solid rgba(79,255,176,0.15);
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+  .fx-preview { background: var(--bg3); border: 1px solid rgba(79,255,176,0.15); border-radius: 12px; padding: 16px; display: flex; align-items: center; justify-content: space-between; }
   .fx-preview-from, .fx-preview-to { font-family: 'DM Mono', monospace; font-size: 14px; }
   .fx-preview-from .val { font-size: 20px; font-weight: 500; color: var(--text); }
   .fx-preview-from .cur { color: var(--text3); font-size: 12px; margin-top: 2px; }
-  .fx-preview-arrow {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    color: var(--accent);
-  }
+  .fx-preview-arrow { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--accent); }
   .fx-preview-arrow .rate-label { font-size: 10px; color: var(--text3); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
   .fx-preview-to .val { font-size: 20px; font-weight: 500; color: var(--accent); text-align: right; }
   .fx-preview-to .cur { color: var(--text3); font-size: 12px; margin-top: 2px; text-align: right; }
 
-  /* Privacy toggle */
-  .privacy-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-  }
+  /* ── PRIVACY ROW ── */
+  .privacy-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border); transition: all 0.3s; }
+  .privacy-row.active { background: rgba(79,255,176,0.04); border-color: rgba(79,255,176,0.2); }
+  .privacy-row:not(.active) { background: var(--bg3); }
   .privacy-label { font-size: 14px; font-weight: 600; }
-  .privacy-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
-  .toggle {
-    width: 44px; height: 24px;
-    background: var(--surface2);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    position: relative;
-    cursor: none;
-    transition: background 0.3s;
-  }
-  .toggle.on { background: rgba(79,255,176,0.2); border-color: rgba(79,255,176,0.3); }
-  .toggle::after {
-    content: '';
-    position: absolute;
-    top: 2px; left: 2px;
-    width: 18px; height: 18px;
-    background: var(--text3);
-    border-radius: 50%;
-    transition: all 0.3s;
-  }
-  .toggle.on::after { left: 22px; background: var(--accent); }
+  .privacy-sub { font-size: 12px; color: var(--text3); margin-top: 2px; transition: color 0.3s; }
+  .privacy-row.active .privacy-sub { color: var(--accent); }
 
-  /* Schedule selector */
-  .schedule-pills {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .pill {
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: none;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text2);
-    transition: all 0.2s;
-    font-family: 'Cabinet Grotesk', sans-serif;
-  }
+  .toggle { width: 44px; height: 24px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border); position: relative; cursor: none; transition: background 0.3s; flex-shrink: 0; }
+  .toggle.on { background: rgba(79,255,176,0.25); border-color: rgba(79,255,176,0.4); }
+  .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: var(--text3); border-radius: 50%; transition: all 0.3s; }
+  .toggle.on::after { left: 22px; background: var(--accent); box-shadow: 0 0 8px rgba(79,255,176,0.5); }
+
+  .schedule-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: none; border: 1px solid var(--border); background: transparent; color: var(--text2); transition: all 0.2s; font-family: 'Cabinet Grotesk', sans-serif; }
   .pill.active { background: rgba(79,255,176,0.1); border-color: rgba(79,255,176,0.3); color: var(--accent); }
   .pill:hover:not(.active) { border-color: var(--border-bright); color: var(--text); }
 
-  /* TX HISTORY */
-  .tx-list { display: flex; flex-direction: column; gap: 0; }
-  .tx-item {
-    display: flex;
-    align-items: center;
-    padding: 16px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-    gap: 14px;
-  }
+  .tx-list { display: flex; flex-direction: column; }
+  .tx-item { display: flex; align-items: center; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.03); gap: 14px; }
   .tx-item:last-child { border-bottom: none; }
-  .tx-icon {
-    width: 40px; height: 40px;
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
+  .tx-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
   .tx-icon.out { background: rgba(255,107,53,0.1); }
   .tx-icon.in { background: rgba(79,255,176,0.1); }
-  .tx-icon.pending { background: rgba(245,200,66,0.1); }
   .tx-meta { flex: 1; }
   .tx-desc { font-size: 14px; font-weight: 600; }
-  .tx-hash {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text3);
-    margin-top: 2px;
-    cursor: none;
-  }
-  .tx-hash:hover { color: var(--accent2); }
+  .tx-hash { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); margin-top: 2px; }
   .tx-time { font-size: 11px; color: var(--text3); }
   .tx-amount { text-align: right; }
   .tx-amount .val { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; }
   .tx-amount .cur { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: 'DM Mono', monospace; }
 
-  /* PROGRESS / RUN STATUS */
-  .run-status {
-    background: linear-gradient(135deg, rgba(79,255,176,0.06), rgba(0,212,255,0.04));
-    border: 1px solid rgba(79,255,176,0.15);
-    border-radius: 14px;
-    padding: 24px;
-    margin-bottom: 16px;
-  }
+  /* privacy masking */
+  .tx-amount .val.masked { letter-spacing: 2px; filter: blur(5px); user-select: none; transition: filter 0.3s; }
+
+  .run-status { background: linear-gradient(135deg, rgba(79,255,176,0.06), rgba(0,212,255,0.04)); border: 1px solid rgba(79,255,176,0.15); border-radius: 14px; padding: 24px; margin-bottom: 16px; }
   .run-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
   .run-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
-  .run-badge {
-    display: flex; align-items: center; gap: 6px;
-    padding: 5px 12px;
-    background: rgba(79,255,176,0.1);
-    border: 1px solid rgba(79,255,176,0.2);
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--accent);
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 0.05em;
-  }
-  .progress-bar {
-    height: 6px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 12px;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    border-radius: 3px;
-    animation: progressGrow 2s ease-out forwards;
-    transform-origin: left;
-    width: 0%;
-  }
-  @keyframes progressGrow {
-    from { width: 0%; }
-    to { width: 73%; }
-  }
+  .run-badge { display: flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(79,255,176,0.1); border: 1px solid rgba(79,255,176,0.2); border-radius: 20px; font-size: 11px; font-weight: 700; color: var(--accent); font-family: 'DM Mono', monospace; }
+  .progress-bar { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; margin-bottom: 12px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; animation: progressGrow 2s ease-out forwards; width: 0%; }
+  @keyframes progressGrow { from { width:0%; } to { width:73%; } }
   .progress-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; }
   .run-steps { display: flex; gap: 8px; margin-top: 16px; }
-  .run-step {
-    flex: 1;
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 600;
-    text-align: center;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
+  .run-step { flex: 1; padding: 10px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .run-step.done { background: rgba(79,255,176,0.1); color: var(--accent); }
   .run-step.active { background: rgba(0,212,255,0.1); color: var(--accent2); animation: stepPulse 1.5s ease-in-out infinite; }
   .run-step.queued { background: rgba(255,255,255,0.04); color: var(--text3); }
-  @keyframes stepPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-  }
+  @keyframes stepPulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
 
-  /* SPENDING CHART */
-  .mini-chart {
-    display: flex;
-    align-items: flex-end;
-    gap: 4px;
-    height: 64px;
-    margin-top: 16px;
-  }
-  .bar-col {
-    flex: 1;
-    border-radius: 4px 4px 0 0;
-    transition: opacity 0.2s;
-    cursor: none;
-    position: relative;
-  }
+  .mini-chart { display: flex; align-items: flex-end; gap: 4px; height: 64px; margin-top: 16px; }
+  .bar-col { flex: 1; border-radius: 4px 4px 0 0; transition: opacity 0.2s; cursor: none; position: relative; }
   .bar-col:hover { opacity: 0.8; }
-  .bar-col .bar-tip {
-    position: absolute;
-    bottom: calc(100% + 4px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--surface2);
-    border: 1px solid var(--border-bright);
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 10px;
-    font-family: 'DM Mono', monospace;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s;
-    color: var(--text);
-  }
+  .bar-col .bar-tip { position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); background: var(--surface2); border: 1px solid var(--border-bright); border-radius: 6px; padding: 4px 8px; font-size: 10px; font-family: 'DM Mono', monospace; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s; color: var(--text); }
   .bar-col:hover .bar-tip { opacity: 1; }
 
-  /* Network health */
   .health-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
-  .health-item {
-    background: var(--bg3);
-    border-radius: 10px;
-    padding: 14px;
-    border: 1px solid var(--border);
-  }
+  .health-item { background: var(--bg3); border-radius: 10px; padding: 14px; border: 1px solid var(--border); }
   .health-item-label { font-size: 11px; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
   .health-item-val { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; color: var(--text); }
   .health-item-sub { font-size: 11px; color: var(--accent); margin-top: 3px; display: flex; align-items: center; gap: 4px; }
 
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  .animate-in { animation: fadeUp 0.6s ease both; }
 
-  .animate-in {
-    animation: fadeUp 0.6s ease both;
-  }
-
-  /* TABS */
-  .tabs {
-    display: flex;
-    gap: 4px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 4px;
-  }
-  .tab {
-    padding: 8px 16px;
-    border-radius: 7px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: none;
-    border: none;
-    background: transparent;
-    color: var(--text3);
-    transition: all 0.2s;
-    font-family: 'Cabinet Grotesk', sans-serif;
-  }
+  .tabs { display: flex; gap: 4px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 4px; }
+  .tab { padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: none; border: none; background: transparent; color: var(--text3); transition: all 0.2s; font-family: 'Cabinet Grotesk', sans-serif; }
   .tab.active { background: var(--surface2); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
   .tab:hover:not(.active) { color: var(--text2); }
 
-  /* Dividers */
   .divider { height: 1px; background: var(--border); margin: 20px 0; }
-
-  /* Action row */
   .action-row { display: flex; gap: 8px; align-items: center; }
 
-  /* ARC network badge */
-  .arc-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
-    background: rgba(79,255,176,0.06);
-    border: 1px solid rgba(79,255,176,0.12);
-    border-radius: 8px;
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    color: var(--text3);
-  }
+  .arc-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(79,255,176,0.06); border: 1px solid rgba(79,255,176,0.12); border-radius: 8px; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--text3); }
   .arc-badge .dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
 
-  /* Scrollbar */
+  /* ── MODAL BASE ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(10px); z-index: 200; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: var(--surface); border: 1px solid var(--border-bright); border-radius: 20px; padding: 36px; width: min(520px,90vw); animation: fadeUp 0.3s ease both; position: relative; }
+  .modal-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; color: var(--text2); width: 32px; height: 32px; cursor: none; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .modal-close:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+  .modal-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .modal-sub { color: var(--text3); font-size: 13px; margin-bottom: 28px; }
+
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
 
-  /* Responsive hints */
   @media (max-width: 1100px) {
-    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .kpi-row { grid-template-columns: repeat(2,1fr); }
     .dashboard { grid-template-columns: 1fr 1fr; }
     .panel-wide { grid-column: span 2; }
     .panel-full { grid-column: span 2; }
@@ -963,23 +409,133 @@
     nav .nav-links { display: none; }
     .run-steps { flex-direction: column; }
   }
+  /* ── VAULT STYLES ── */
+  .vault-section { padding: 0 40px 120px; max-width: 1320px; margin: 0 auto; }
 
-  /* Floating number animation */
-  @keyframes countUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .count-anim { animation: countUp 0.5s ease both; }
+  .vault-kpi-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 24px; }
 
-  /* Shimmer */
-  .shimmer {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
-    background-size: 200% 100%;
-    animation: shimmer 2.5s infinite;
+  .vault-hero {
+    background: linear-gradient(135deg, rgba(123,97,255,0.08), rgba(79,255,176,0.04));
+    border: 1px solid rgba(123,97,255,0.2);
+    border-radius: 20px; padding: 32px; margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px;
   }
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+  .vault-hero-left { flex: 1; }
+  .vault-hero-title { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .vault-hero-sub { font-size: 14px; color: var(--text2); max-width: 480px; line-height: 1.6; }
+  .vault-hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .vault-hero-stat .val { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+  .vault-hero-stat .lbl { font-size: 11px; color: var(--text3); margin-top: 3px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .vault-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .vault-card {
+    background: var(--surface); border-radius: 20px; padding: 28px;
+    border: 1px solid var(--border); position: relative; overflow: hidden; transition: all 0.3s;
+  }
+  .vault-card:hover { border-color: var(--border-bright); transform: translateY(-2px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+  .vault-card.flexible::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at top right, rgba(79,255,176,0.06), transparent 60%); pointer-events:none; }
+  .vault-card.locked::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at top right, rgba(123,97,255,0.08), transparent 60%); pointer-events:none; }
+
+  .vault-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
+  .vault-card-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+  .vault-card-sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+  .vault-apy-badge {
+    display: flex; flex-direction: column; align-items: flex-end;
+  }
+  .vault-apy-num {
+    font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .vault-card.locked .vault-apy-num {
+    background: linear-gradient(135deg, #a98fff, var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .vault-apy-label { font-size: 11px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
+
+  .vault-balance-box {
+    background: var(--bg3); border-radius: 14px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border);
+  }
+  .vault-balance-label { font-size: 11px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+  .vault-balance-main { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; }
+  .vault-balance-sub { font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; margin-top: 4px; }
+
+  .vault-earnings-ticker {
+    background: rgba(79,255,176,0.04); border: 1px solid rgba(79,255,176,0.12);
+    border-radius: 10px; padding: 12px 16px; margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .vault-card.locked .vault-earnings-ticker { background: rgba(123,97,255,0.04); border-color: rgba(123,97,255,0.12); }
+  .vault-earnings-label { font-size: 12px; color: var(--text3); }
+  .vault-earnings-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; color: var(--accent); }
+  .vault-card.locked .vault-earnings-val { color: #a98fff; }
+
+  .vault-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .vault-input { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 15px; font-family: 'DM Mono', monospace; outline: none; transition: border-color 0.2s; cursor: none; }
+  .vault-input:focus { border-color: rgba(79,255,176,0.4); box-shadow: 0 0 0 3px rgba(79,255,176,0.06); }
+  .vault-card.locked .vault-input:focus { border-color: rgba(123,97,255,0.4); box-shadow: 0 0 0 3px rgba(123,97,255,0.06); }
+  .vault-input::placeholder { color: var(--text3); }
+  .vault-max-btn { background: rgba(79,255,176,0.08); border: 1px solid rgba(79,255,176,0.15); color: var(--accent); border-radius: 8px; padding: 0 14px; font-size: 12px; font-weight: 700; cursor: none; font-family: 'DM Mono', monospace; transition: all 0.2s; }
+  .vault-max-btn:hover { background: rgba(79,255,176,0.15); }
+  .vault-card.locked .vault-max-btn { background: rgba(123,97,255,0.08); border-color: rgba(123,97,255,0.15); color: #a98fff; }
+
+  .vault-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .vault-btn-deposit {
+    padding: 13px; border-radius: 10px; border: none; font-weight: 700; font-size: 14px;
+    cursor: none; font-family: 'Cabinet Grotesk', sans-serif; transition: all 0.2s;
+    background: linear-gradient(135deg, var(--accent), #00e5a0); color: #080a0e;
+  }
+  .vault-card.locked .vault-btn-deposit { background: linear-gradient(135deg, #a98fff, #7b61ff); color: white; }
+  .vault-btn-deposit:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(79,255,176,0.25); }
+  .vault-card.locked .vault-btn-deposit:hover { box-shadow: 0 8px 24px rgba(123,97,255,0.25); }
+  .vault-btn-withdraw {
+    padding: 13px; border-radius: 10px; font-weight: 700; font-size: 14px;
+    cursor: none; font-family: 'Cabinet Grotesk', sans-serif; transition: all 0.2s;
+    background: transparent; color: var(--text2); border: 1px solid var(--border);
+  }
+  .vault-btn-withdraw:hover { border-color: var(--border-bright); color: var(--text); background: rgba(255,255,255,0.04); }
+
+  .vault-meta { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+  .vault-meta-row { display: flex; justify-content: space-between; font-size: 12px; }
+  .vault-meta-row .k { color: var(--text3); }
+  .vault-meta-row .v { color: var(--text2); font-family: 'DM Mono', monospace; font-weight: 500; }
+  .vault-meta-row .v.green { color: var(--accent); }
+  .vault-meta-row .v.purple { color: #a98fff; }
+
+  .lock-period-pills { display: flex; gap: 6px; margin-bottom: 16px; }
+  .lock-pill {
+    flex: 1; padding: 8px; border-radius: 8px; text-align: center; cursor: none;
+    border: 1px solid var(--border); background: transparent; color: var(--text3);
+    font-size: 12px; font-weight: 700; font-family: 'Cabinet Grotesk', sans-serif; transition: all 0.2s;
+  }
+  .lock-pill.active { background: rgba(123,97,255,0.12); border-color: rgba(123,97,255,0.3); color: #a98fff; }
+  .lock-pill .apy-hint { display: block; font-size: 10px; font-family: 'DM Mono', monospace; margin-top: 2px; }
+
+  .vault-tx-feed { display: flex; flex-direction: column; gap: 0; }
+  .vault-tx { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .vault-tx:last-child { border-bottom: none; }
+  .vault-tx-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .vault-tx-icon.dep { background: rgba(79,255,176,0.1); }
+  .vault-tx-icon.wit { background: rgba(255,107,53,0.1); }
+  .vault-tx-icon.ear { background: rgba(123,97,255,0.1); }
+  .vault-tx-meta { flex: 1; }
+  .vault-tx-desc { font-size: 13px; font-weight: 600; }
+  .vault-tx-date { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .vault-tx-amount { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; text-align: right; }
+
+  .vault-total-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 28px; grid-column: span 2; position: relative; overflow: hidden;
+  }
+  .vault-total-card::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at center, rgba(79,255,176,0.03), transparent 70%); pointer-events:none; }
+
+  @media (max-width: 900px) {
+    .vault-grid { grid-template-columns: 1fr; }
+    .vault-total-card { grid-column: span 1; }
+    .vault-kpi-row { grid-template-columns: 1fr 1fr; }
+    .vault-hero { flex-direction: column; }
+    .vault-section { padding: 0 20px 80px; }
   }
 </style>
 </head>
@@ -996,120 +552,91 @@
   <!-- NAV -->
   <nav id="navbar">
     <a href="#" class="nav-logo">
-      <div class="logo-mark">AP</div>
-      ArcPay
+      <div class="logo-mark" style="background:none;padding:0;width:38px;height:38px;">
+        <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="38" height="38" rx="11" fill="url(#logoGrad)"/>
+          <path d="M11 19C11 19 13.5 13 19 13C24.5 13 27 19 27 19" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M11 19C11 19 13.5 25 19 25C24.5 25 27 19 27 19" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="19" cy="19" r="3" fill="white"/>
+          <circle cx="19" cy="19" r="1.5" fill="url(#logoGrad)"/>
+          <defs>
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#4fffb0"/>
+              <stop offset="100%" stop-color="#00d4ff"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      Settlo
     </a>
     <ul class="nav-links">
       <li><a href="#dashboard">Dashboard</a></li>
       <li><a href="#payroll">Payroll</a></li>
       <li><a href="#team">Team</a></li>
       <li><a href="#history">History</a></li>
+      <li><a href="#vault">Vault</a></li>
     </ul>
     <div style="display:flex;align-items:center;gap:12px;">
-      <div class="nav-badge">
-        <div class="pulse-dot"></div>
-        Arc Testnet
-      </div>
-      <button class="btn-connect" onclick="toggleConnect(this)">Connect Wallet</button>
+      <div class="nav-badge"><div class="pulse-dot"></div>Arc Testnet</div>
+      <button class="btn-connect" id="connectBtn" onclick="toggleConnect(this)">Connect Wallet</button>
     </div>
   </nav>
 
   <!-- HERO -->
   <section class="hero" id="hero">
     <div class="hero-tag">⚡ Built on Arc L1 · Circle's Economic OS</div>
-    <h1>
-      Global payroll.<br>
-      <span class="grad">Stablecoin-native.</span>
-    </h1>
-    <p class="hero-sub">
-      Pay any team member, anywhere, in their local stablecoin — in under a second. Powered by Arc's built-in FX engine and USDC-native settlement.
-    </p>
+    <h1>Global payroll.<br><span class="grad">Stablecoin-native.</span></h1>
+    <p class="hero-sub">Pay any team member, anywhere, in their local stablecoin — in under a second. Powered by Arc's built-in FX engine and USDC-native settlement.</p>
     <div class="hero-cta">
       <button class="btn-primary" onclick="scrollToApp()">Launch App →</button>
       <button class="btn-ghost" onclick="scrollToApp()">View Demo</button>
     </div>
     <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="val" id="heroTvl">$0</div>
-        <div class="lbl">Total Disbursed</div>
-      </div>
+      <div class="hero-stat"><div class="val" id="heroTvl">$0</div><div class="lbl">Total Disbursed</div></div>
       <div class="stat-div"></div>
-      <div class="hero-stat">
-        <div class="val" id="heroEmps">0</div>
-        <div class="lbl">Employees Paid</div>
-      </div>
+      <div class="hero-stat"><div class="val" id="heroEmps">0</div><div class="lbl">Employees Paid</div></div>
       <div class="stat-div"></div>
-      <div class="hero-stat">
-        <div class="val" id="heroSave">0%</div>
-        <div class="lbl">Avg Fee Savings vs SWIFT</div>
-      </div>
+      <div class="hero-stat"><div class="val" id="heroSave">0%</div><div class="lbl">Avg Fee Savings vs SWIFT</div></div>
       <div class="stat-div"></div>
-      <div class="hero-stat">
-        <div class="val">&lt;1s</div>
-        <div class="lbl">Settlement Finality</div>
-      </div>
+      <div class="hero-stat"><div class="val">&lt;1s</div><div class="lbl">Settlement Finality</div></div>
     </div>
-    <div class="hero-scroll">
-      <span>Scroll</span>
-      <div class="scroll-line"></div>
-    </div>
+    <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
   </section>
 
   <!-- APP DASHBOARD -->
   <section class="app-section" id="dashboard">
-    <div class="section-label">
-      <span>01 · Overview</span>
-    </div>
+    <div class="section-label"><span>01 · Overview</span></div>
 
-    <!-- KPI ROW -->
     <div class="kpi-row animate-in">
       <div class="kpi-card green">
-        <div class="kpi-label">
-          <div class="kpi-icon g">💵</div>
-          Total Disbursed
-        </div>
+        <div class="kpi-label"><div class="kpi-icon g">💵</div>Total Disbursed</div>
         <div class="kpi-value">$284,910</div>
         <div class="kpi-change up">↑ 12.4% this month</div>
       </div>
       <div class="kpi-card blue">
-        <div class="kpi-label">
-          <div class="kpi-icon b">👥</div>
-          Active Employees
-        </div>
-        <div class="kpi-value">47</div>
+        <div class="kpi-label"><div class="kpi-icon b">👥</div>Active Employees</div>
+        <div class="kpi-value" id="empCount">47</div>
         <div class="kpi-change up">↑ 3 added this week</div>
       </div>
       <div class="kpi-card purple">
-        <div class="kpi-label">
-          <div class="kpi-icon p">🔄</div>
-          Currencies Supported
-        </div>
+        <div class="kpi-label"><div class="kpi-icon p">🔄</div>Currencies Supported</div>
         <div class="kpi-value">9</div>
         <div class="kpi-change neutral">USDC, EURC, JPYC, BRL +5</div>
       </div>
       <div class="kpi-card gold">
-        <div class="kpi-label">
-          <div class="kpi-icon go">⚡</div>
-          Avg Settlement
-        </div>
+        <div class="kpi-label"><div class="kpi-icon go">⚡</div>Avg Settlement</div>
         <div class="kpi-value">0.38s</div>
         <div class="kpi-change up">↑ Arc finality</div>
       </div>
     </div>
 
-    <!-- Active Payroll Run Status -->
     <div class="run-status animate-in">
       <div class="run-header">
         <div class="run-title">April 2026 Payroll Run</div>
         <div class="run-badge"><div class="pulse-dot"></div> Processing</div>
       </div>
-      <div class="progress-bar">
-        <div class="progress-fill"></div>
-      </div>
-      <div class="progress-info">
-        <span>34 / 47 transactions confirmed</span>
-        <span>$198,450 / $284,910 sent</span>
-      </div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="progress-info"><span>34 / 47 transactions confirmed</span><span>$198,450 / $284,910 sent</span></div>
       <div class="run-steps">
         <div class="run-step done">✓ FX Quotes Fetched</div>
         <div class="run-step done">✓ Batch Signed</div>
@@ -1119,7 +646,6 @@
       </div>
     </div>
 
-    <!-- MAIN DASHBOARD GRID -->
     <div class="dashboard">
 
       <!-- Employee Table -->
@@ -1128,9 +654,9 @@
           <h3>Team Roster</h3>
           <div class="action-row">
             <div class="tabs">
-              <button class="tab active" onclick="switchTab(this, 'all')">All</button>
-              <button class="tab" onclick="switchTab(this, 'pending')">Pending</button>
-              <button class="tab" onclick="switchTab(this, 'done')">Paid</button>
+              <button class="tab active" onclick="switchTab(this)">All</button>
+              <button class="tab" onclick="switchTab(this)">Pending</button>
+              <button class="tab" onclick="switchTab(this)">Paid</button>
             </div>
             <button class="btn-sm primary" onclick="showAddModal()">+ Add</button>
           </div>
@@ -1147,116 +673,69 @@
             </tr>
           </thead>
           <tbody id="empTableBody">
-            <tr>
-              <td><div class="emp-info"><div class="emp-avatar" style="background:rgba(79,255,176,0.1);color:var(--accent)">AK</div><div><div class="emp-name">Aiko Kimura</div><div class="emp-role">0x3f4a...b28c</div></div></div></td>
-              <td style="color:var(--text2)">Lead Engineer</td>
+            <tr data-id="1">
+              <td><div class="emp-info"><div class="emp-avatar" style="background:rgba(79,255,176,0.1);color:var(--accent)">AK</div><div><div class="emp-name">Aiko Kimura</div><div class="emp-role emp-wallet">0x3f4a...b28c</div></div></div></td>
+              <td style="color:var(--text2)" class="emp-role-cell">Lead Engineer</td>
               <td><span class="tag jpyc">JPYC</span></td>
-              <td><div class="amount-cell"><div class="amount-main">¥850,000</div><div class="amount-sub">≈ $5,620 USDC</div></div></td>
+              <td><div class="amount-cell"><div class="amount-main tx-amount" data-amount="¥850,000">¥850,000</div><div class="amount-sub tx-usdc" data-usdc="≈ $5,620 USDC">≈ $5,620 USDC</div></div></td>
               <td><span class="tag active">Active</span></td>
-              <td><button class="btn-sm ghost" style="padding:6px 12px;font-size:12px">Edit</button></td>
+              <td><div class="emp-actions"><button class="btn-sm ghost" style="padding:6px 12px;font-size:12px" onclick="openEditModal(this, 'Aiko Kimura','Lead Engineer','0x3f4ab28c','850000','jpyc')">Edit</button><button class="btn-sm primary" style="padding:6px 12px;font-size:12px" onclick="paySingle(this)">Pay</button><button class="btn-sm danger" style="padding:6px 12px;font-size:12px" onclick="removeEmployee(this)">Remove</button></div></td>
             </tr>
-            <tr>
-              <td><div class="emp-info"><div class="emp-avatar" style="background:rgba(0,212,255,0.1);color:var(--accent2)">MS</div><div><div class="emp-name">Marco Silva</div><div class="emp-role">0x7c21...e94f</div></div></div></td>
-              <td style="color:var(--text2)">Product Designer</td>
+            <tr data-id="2">
+              <td><div class="emp-info"><div class="emp-avatar" style="background:rgba(0,212,255,0.1);color:var(--accent2)">MS</div><div><div class="emp-name">Marco Silva</div><div class="emp-role emp-wallet">0x7c21...e94f</div></div></div></td>
+              <td style="color:var(--text2)" class="emp-role-cell">Product Designer</td>
               <td><span class="tag brl">BRL</span></td>
-              <td><div class="amount-cell"><div class="amount-main">R$ 18,000</div><div class="amount-sub">≈ $3,200 USDC</div></div></td>
+              <td><div class="amount-cell"><div class="amount-main tx-amount" data-amount="R$ 18,000">R$ 18,000</div><div class="amount-sub tx-usdc" data-usdc="≈ $3,200 USDC">≈ $3,200 USDC</div></div></td>
               <td><span class="tag processing">Sending</span></td>
-              <td><button class="btn-sm ghost" style="padding:6px 12px;font-size:12px">Edit</button></td>
+              <td><div class="emp-actions"><button class="btn-sm ghost" style="padding:6px 12px;font-size:12px" onclick="openEditModal(this, 'Marco Silva','Product Designer','0x7c21e94f','18000','brl')">Edit</button><button class="btn-sm primary" style="padding:6px 12px;font-size:12px" onclick="paySingle(this)">Pay</button><button class="btn-sm danger" style="padding:6px 12px;font-size:12px" onclick="removeEmployee(this)">Remove</button></div></td>
             </tr>
-            <tr>
-              <td><div class="emp-info"><div class="emp-avatar" style="background:rgba(123,97,255,0.1);color:#a98fff">LP</div><div><div class="emp-name">Léa Perrin</div><div class="emp-role">0x9d55...a71b</div></div></div></td>
-              <td style="color:var(--text2)">Growth Lead</td>
+            <tr data-id="3">
+              <td><div class="emp-info"><div class="emp-avatar" style="background:rgba(123,97,255,0.1);color:#a98fff">LP</div><div><div class="emp-name">Léa Perrin</div><div class="emp-role emp-wallet">0x9d55...a71b</div></div></div></td>
+              <td style="color:var(--text2)" class="emp-role-cell">Growth Lead</td>
               <td><span class="tag eurc">EURC</span></td>
-              <td><div class="amount-cell"><div class="amount-main">€4,800</div><div class="amount-sub">≈ $5,184 USDC</div></div></td>
+              <td><div class="amount-cell"><div class="amount-main tx-amount" data-amount="€4,800">€4,800</div><div class="amount-sub tx-usdc" data-usdc="≈ $5,184 USDC">≈ $5,184 USDC</div></div></td>
               <td><span class="tag active">Active</span></td>
-              <td><button class="btn-sm ghost" style="padding:6px 12px;font-size:12px">Edit</button></td>
+              <td><div class="emp-actions"><button class="btn-sm ghost" style="padding:6px 12px;font-size:12px" onclick="openEditModal(this, 'Léa Perrin','Growth Lead','0x9d55a71b','4800','eurc')">Edit</button><button class="btn-sm primary" style="padding:6px 12px;font-size:12px" onclick="paySingle(this)">Pay</button><button class="btn-sm danger" style="padding:6px 12px;font-size:12px" onclick="removeEmployee(this)">Remove</button></div></td>
             </tr>
-            <tr>
-              <td><div class="emp-info"><div class="emp-avatar" style="background:rgba(245,200,66,0.1);color:var(--gold)">RN</div><div><div class="emp-name">Raj Nair</div><div class="emp-role">0x1b88...c33d</div></div></div></td>
-              <td style="color:var(--text2)">Backend Dev</td>
+            <tr data-id="4">
+              <td><div class="emp-info"><div class="emp-avatar" style="background:rgba(245,200,66,0.1);color:var(--gold)">RN</div><div><div class="emp-name">Raj Nair</div><div class="emp-role emp-wallet">0x1b88...c33d</div></div></div></td>
+              <td style="color:var(--text2)" class="emp-role-cell">Backend Dev</td>
               <td><span class="tag usdc">USDC</span></td>
-              <td><div class="amount-cell"><div class="amount-main">$6,000</div><div class="amount-sub">Direct USDC</div></div></td>
+              <td><div class="amount-cell"><div class="amount-main tx-amount" data-amount="$6,000">$6,000</div><div class="amount-sub tx-usdc" data-usdc="Direct USDC">Direct USDC</div></div></td>
               <td><span class="tag active">Active</span></td>
-              <td><button class="btn-sm ghost" style="padding:6px 12px;font-size:12px">Edit</button></td>
+              <td><div class="emp-actions"><button class="btn-sm ghost" style="padding:6px 12px;font-size:12px" onclick="openEditModal(this, 'Raj Nair','Backend Dev','0x1b88c33d','6000','usdc')">Edit</button><button class="btn-sm primary" style="padding:6px 12px;font-size:12px" onclick="paySingle(this)">Pay</button><button class="btn-sm danger" style="padding:6px 12px;font-size:12px" onclick="removeEmployee(this)">Remove</button></div></td>
             </tr>
-            <tr>
-              <td><div class="emp-info"><div class="emp-avatar" style="background:rgba(255,107,53,0.1);color:var(--warn)">TW</div><div><div class="emp-name">Tom Walsh</div><div class="emp-role">0x4e92...f110</div></div></div></td>
-              <td style="color:var(--text2)">Smart Contract Dev</td>
+            <tr data-id="5">
+              <td><div class="emp-info"><div class="emp-avatar" style="background:rgba(255,107,53,0.1);color:var(--warn)">TW</div><div><div class="emp-name">Tom Walsh</div><div class="emp-role emp-wallet">0x4e92...f110</div></div></div></td>
+              <td style="color:var(--text2)" class="emp-role-cell">Smart Contract Dev</td>
               <td><span class="tag usdc">USDC</span></td>
-              <td><div class="amount-cell"><div class="amount-main">$7,500</div><div class="amount-sub">Direct USDC</div></div></td>
+              <td><div class="amount-cell"><div class="amount-main tx-amount" data-amount="$7,500">$7,500</div><div class="amount-sub tx-usdc" data-usdc="Direct USDC">Direct USDC</div></div></td>
               <td><span class="tag pending">Pending</span></td>
-              <td><button class="btn-sm ghost" style="padding:6px 12px;font-size:12px">Edit</button></td>
+              <td><div class="emp-actions"><button class="btn-sm ghost" style="padding:6px 12px;font-size:12px" onclick="openEditModal(this, 'Tom Walsh','Smart Contract Dev','0x4e92f110','7500','usdc')">Edit</button><button class="btn-sm primary" style="padding:6px 12px;font-size:12px" onclick="paySingle(this)">Pay</button><button class="btn-sm danger" style="padding:6px 12px;font-size:12px" onclick="removeEmployee(this)">Remove</button></div></td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- FX Rate Panel -->
+      <!-- FX Panel -->
       <div class="card animate-in">
         <div class="payroll-header">
           <h3>Live FX Rates</h3>
           <div class="arc-badge"><div class="dot"></div>Arc Engine</div>
         </div>
         <div class="fx-list">
-          <div class="fx-row">
-            <div class="fx-pair">
-              <div class="fx-flags">🇺🇸🇯🇵</div>
-              <div><div class="fx-label">USDC → JPYC</div><div class="fx-sublabel">USD/JPY</div></div>
-            </div>
-            <div class="fx-rate"><div class="fx-rate-main">151.24</div><div class="fx-rate-change" style="color:var(--accent)">↑ +0.12%</div></div>
-          </div>
-          <div class="fx-row">
-            <div class="fx-pair">
-              <div class="fx-flags">🇺🇸🇪🇺</div>
-              <div><div class="fx-label">USDC → EURC</div><div class="fx-sublabel">USD/EUR</div></div>
-            </div>
-            <div class="fx-rate"><div class="fx-rate-main">0.9250</div><div class="fx-rate-change" style="color:var(--warn)">↓ -0.04%</div></div>
-          </div>
-          <div class="fx-row">
-            <div class="fx-pair">
-              <div class="fx-flags">🇺🇸🇧🇷</div>
-              <div><div class="fx-label">USDC → BRL</div><div class="fx-sublabel">USD/BRL</div></div>
-            </div>
-            <div class="fx-rate"><div class="fx-rate-main">5.6140</div><div class="fx-rate-change" style="color:var(--accent)">↑ +0.31%</div></div>
-          </div>
-          <div class="fx-row">
-            <div class="fx-pair">
-              <div class="fx-flags">🇺🇸🇰🇷</div>
-              <div><div class="fx-label">USDC → KRW</div><div class="fx-sublabel">USD/KRW</div></div>
-            </div>
-            <div class="fx-rate"><div class="fx-rate-main">1,328.5</div><div class="fx-rate-change" style="color:var(--text3)">→ 0.00%</div></div>
-          </div>
-          <div class="fx-row">
-            <div class="fx-pair">
-              <div class="fx-flags">🇺🇸🇦🇺</div>
-              <div><div class="fx-label">USDC → AUDC</div><div class="fx-sublabel">USD/AUD</div></div>
-            </div>
-            <div class="fx-rate"><div class="fx-rate-main">1.5320</div><div class="fx-rate-change" style="color:var(--warn)">↓ -0.08%</div></div>
-          </div>
+          <div class="fx-row"><div class="fx-pair"><div class="fx-flags">🇺🇸🇯🇵</div><div><div class="fx-label">USDC → JPYC</div><div class="fx-sublabel">USD/JPY</div></div></div><div class="fx-rate"><div class="fx-rate-main">151.24</div><div class="fx-rate-change" style="color:var(--accent)">↑ +0.12%</div></div></div>
+          <div class="fx-row"><div class="fx-pair"><div class="fx-flags">🇺🇸🇪🇺</div><div><div class="fx-label">USDC → EURC</div><div class="fx-sublabel">USD/EUR</div></div></div><div class="fx-rate"><div class="fx-rate-main">0.9250</div><div class="fx-rate-change" style="color:var(--warn)">↓ -0.04%</div></div></div>
+          <div class="fx-row"><div class="fx-pair"><div class="fx-flags">🇺🇸🇧🇷</div><div><div class="fx-label">USDC → BRL</div><div class="fx-sublabel">USD/BRL</div></div></div><div class="fx-rate"><div class="fx-rate-main">5.6140</div><div class="fx-rate-change" style="color:var(--accent)">↑ +0.31%</div></div></div>
+          <div class="fx-row"><div class="fx-pair"><div class="fx-flags">🇺🇸🇰🇷</div><div><div class="fx-label">USDC → KRW</div><div class="fx-sublabel">USD/KRW</div></div></div><div class="fx-rate"><div class="fx-rate-main">1,328.5</div><div class="fx-rate-change" style="color:var(--text3)">→ 0.00%</div></div></div>
+          <div class="fx-row"><div class="fx-pair"><div class="fx-flags">🇺🇸🇦🇺</div><div><div class="fx-label">USDC → AUDC</div><div class="fx-sublabel">USD/AUD</div></div></div><div class="fx-rate"><div class="fx-rate-main">1.5320</div><div class="fx-rate-change" style="color:var(--warn)">↓ -0.08%</div></div></div>
         </div>
-
         <div class="divider"></div>
         <div class="health-grid">
-          <div class="health-item">
-            <div class="health-item-label">Block Time</div>
-            <div class="health-item-val">0.38s</div>
-            <div class="health-item-sub"><span style="width:5px;height:5px;background:var(--accent);border-radius:50%;display:inline-block"></span> Nominal</div>
-          </div>
-          <div class="health-item">
-            <div class="health-item-label">Gas Fee</div>
-            <div class="health-item-val">$0.001</div>
-            <div class="health-item-sub"><span style="width:5px;height:5px;background:var(--accent);border-radius:50%;display:inline-block"></span> USDC native</div>
-          </div>
-          <div class="health-item">
-            <div class="health-item-label">TX/s</div>
-            <div class="health-item-val">2,840</div>
-            <div class="health-item-sub"><span style="width:5px;height:5px;background:var(--accent2);border-radius:50%;display:inline-block"></span> Live</div>
-          </div>
-          <div class="health-item">
-            <div class="health-item-label">Finality</div>
-            <div class="health-item-val">1-block</div>
-            <div class="health-item-sub"><span style="width:5px;height:5px;background:var(--accent);border-radius:50%;display:inline-block"></span> Deterministic</div>
-          </div>
+          <div class="health-item"><div class="health-item-label">Block Time</div><div class="health-item-val">0.38s</div><div class="health-item-sub"><span style="width:5px;height:5px;background:var(--accent);border-radius:50%;display:inline-block"></span> Nominal</div></div>
+          <div class="health-item"><div class="health-item-label">Gas Fee</div><div class="health-item-val">$0.001</div><div class="health-item-sub"><span style="width:5px;height:5px;background:var(--accent);border-radius:50%;display:inline-block"></span> USDC native</div></div>
+          <div class="health-item"><div class="health-item-label">TX/s</div><div class="health-item-val">2,840</div><div class="health-item-sub"><span style="width:5px;height:5px;background:var(--accent2);border-radius:50%;display:inline-block"></span> Live</div></div>
+          <div class="health-item"><div class="health-item-label">Finality</div><div class="health-item-val">1-block</div><div class="health-item-sub"><span style="width:5px;height:5px;background:var(--accent);border-radius:50%;display:inline-block"></span> Deterministic</div></div>
         </div>
       </div>
 
@@ -1293,44 +772,43 @@
           <div class="form-group">
             <div class="form-label">FX Preview</div>
             <div class="fx-preview">
-              <div class="fx-preview-from">
-                <div class="val">$284,910</div>
-                <div class="cur">USDC · Source</div>
-              </div>
+              <div class="fx-preview-from"><div class="val">$284,910</div><div class="cur">USDC · Source</div></div>
               <div class="fx-preview-arrow">
                 <svg width="32" height="16" viewBox="0 0 32 16" fill="none"><path d="M0 8H28M28 8L21 2M28 8L21 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 <div class="rate-label">Arc FX Engine</div>
               </div>
-              <div class="fx-preview-to">
-                <div class="val">9 currencies</div>
-                <div class="cur">Auto-converted · Recipients</div>
-              </div>
+              <div class="fx-preview-to"><div class="val">9 currencies</div><div class="cur">Auto-converted · Recipients</div></div>
             </div>
           </div>
+
+          <!-- ── PRIVACY TOGGLE (FUNCTIONAL) ── -->
           <div class="form-group">
             <div class="form-label">Privacy Mode</div>
-            <div class="privacy-row">
+            <div class="privacy-row on" id="privacyRow" onclick="togglePrivacy()">
               <div>
-                <div class="privacy-label">Shield transaction details</div>
-                <div class="privacy-sub">Amounts & recipients hidden on-chain. Auditable via ZK proof.</div>
+                <div class="privacy-label" id="privacyLabel">🔒 Shield transaction details</div>
+                <div class="privacy-sub" id="privacySub">Amounts & recipients hidden on-chain. Auditable via ZK proof.</div>
               </div>
-              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              <div class="toggle on" id="privacyToggle"></div>
             </div>
           </div>
+
           <div class="form-group">
             <div class="form-label">Batch Note (internal)</div>
-            <input type="text" class="form-input" placeholder="April 2026 — Global team payroll run">
+            <input type="text" class="form-input" id="batchNote" placeholder="May 2026 — Global team payroll run">
           </div>
-          <button class="btn-primary" style="width:100%;padding:14px;font-size:15px;border-radius:12px" onclick="triggerRun(this)">
+
+          <button class="btn-primary" style="width:100%;padding:14px;font-size:15px;border-radius:12px" id="runBtn" onclick="triggerRun(this)">
             Run Payroll — $284,910 USDC →
           </button>
-          <div style="text-align:center;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">
+          <div style="text-align:center;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="gasEstimate">
             Est. total gas: $0.047 · ~0.4s finality · 47 recipients
           </div>
+          <div id="txResult"></div>
         </div>
       </div>
 
-      <!-- SPENDING CHART + TX HISTORY -->
+      <!-- TX HISTORY -->
       <div class="card panel-wide animate-in" id="history">
         <div class="payroll-header">
           <h3>Transaction History</h3>
@@ -1343,61 +821,42 @@
             <button class="btn-sm ghost">↓ Export CSV</button>
           </div>
         </div>
-
-        <!-- Mini spending chart -->
         <div style="margin-bottom:8px;font-size:11px;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase;font-weight:600">Monthly Disbursement (USDC)</div>
         <div class="mini-chart" id="miniChart"></div>
         <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">
           <span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span>
         </div>
-
         <div class="divider"></div>
-
-        <div class="tx-list">
+        <div class="tx-list" id="txList">
           <div class="tx-item">
             <div class="tx-icon out">↗</div>
-            <div class="tx-meta">
-              <div class="tx-desc">April Payroll Batch · 47 recipients</div>
-              <div class="tx-hash">0x4fa2...8c1b · <span style="color:var(--accent)">Processing</span></div>
-            </div>
+            <div class="tx-meta"><div class="tx-desc">April Payroll Batch · 47 recipients</div><div class="tx-hash">0x4fa2...8c1b · <span style="color:var(--accent)">Processing</span></div></div>
             <div class="tx-time">Just now</div>
-            <div class="tx-amount"><div class="val" style="color:var(--warn)">-$284,910</div><div class="cur">47 txs · 9 currencies</div></div>
+            <div class="tx-amount"><div class="val history-amount" data-amount="-$284,910" style="color:var(--warn)">-$284,910</div><div class="cur">47 txs · 9 currencies</div></div>
           </div>
           <div class="tx-item">
             <div class="tx-icon out">↗</div>
-            <div class="tx-meta">
-              <div class="tx-desc">March Payroll Batch · 44 recipients</div>
-              <div class="tx-hash">0x9cc4...3d70</div>
-            </div>
+            <div class="tx-meta"><div class="tx-desc">March Payroll Batch · 44 recipients</div><div class="tx-hash">0x9cc4...3d70</div></div>
             <div class="tx-time">Apr 1</div>
-            <div class="tx-amount"><div class="val" style="color:var(--warn)">-$271,340</div><div class="cur">44 txs · 8 currencies</div></div>
+            <div class="tx-amount"><div class="val history-amount" data-amount="-$271,340" style="color:var(--warn)">-$271,340</div><div class="cur">44 txs · 8 currencies</div></div>
           </div>
           <div class="tx-item">
             <div class="tx-icon in">↙</div>
-            <div class="tx-meta">
-              <div class="tx-desc">Treasury Top-up · Binance OTC</div>
-              <div class="tx-hash">0x2ab1...f443</div>
-            </div>
+            <div class="tx-meta"><div class="tx-desc">Treasury Top-up · Binance OTC</div><div class="tx-hash">0x2ab1...f443</div></div>
             <div class="tx-time">Mar 28</div>
-            <div class="tx-amount"><div class="val" style="color:var(--accent)">+$500,000</div><div class="cur">USDC</div></div>
+            <div class="tx-amount"><div class="val history-amount" data-amount="+$500,000" style="color:var(--accent)">+$500,000</div><div class="cur">USDC</div></div>
           </div>
           <div class="tx-item">
             <div class="tx-icon out">↗</div>
-            <div class="tx-meta">
-              <div class="tx-desc">Feb Payroll Batch · 44 recipients</div>
-              <div class="tx-hash">0x7be3...1a92</div>
-            </div>
+            <div class="tx-meta"><div class="tx-desc">Feb Payroll Batch · 44 recipients</div><div class="tx-hash">0x7be3...1a92</div></div>
             <div class="tx-time">Mar 1</div>
-            <div class="tx-amount"><div class="val" style="color:var(--warn)">-$268,100</div><div class="cur">44 txs · 8 currencies</div></div>
+            <div class="tx-amount"><div class="val history-amount" data-amount="-$268,100" style="color:var(--warn)">-$268,100</div><div class="cur">44 txs · 8 currencies</div></div>
           </div>
           <div class="tx-item">
             <div class="tx-icon out">↗</div>
-            <div class="tx-meta">
-              <div class="tx-desc">Contractor Payment · 3 wallets</div>
-              <div class="tx-hash">0x5dc0...8e21</div>
-            </div>
+            <div class="tx-meta"><div class="tx-desc">Contractor Payment · 3 wallets</div><div class="tx-hash">0x5dc0...8e21</div></div>
             <div class="tx-time">Feb 18</div>
-            <div class="tx-amount"><div class="val" style="color:var(--warn)">-$14,500</div><div class="cur">3 txs · USDC</div></div>
+            <div class="tx-amount"><div class="val history-amount" data-amount="-$14,500" style="color:var(--warn)">-$14,500</div><div class="cur">3 txs · USDC</div></div>
           </div>
         </div>
       </div>
@@ -1405,43 +864,234 @@
     </div>
   </section>
 
-</div>
+  <!-- ── VAULT SECTION ── -->
+  <section id="vault" class="vault-section">
+    <div class="section-label"><span>02 · Vault</span></div>
 
-<!-- ADD EMPLOYEE MODAL -->
-<div id="addModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:200;align-items:center;justify-content:center;">
-  <div style="background:var(--surface);border:1px solid var(--border-bright);border-radius:20px;padding:36px;width:min(520px,90vw);animation:fadeUp 0.3s ease both;position:relative">
-    <button onclick="closeModal()" style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text2);width:32px;height:32px;cursor:none;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
-    <h3 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em;margin-bottom:6px">Add Employee</h3>
-    <p style="color:var(--text3);font-size:13px;margin-bottom:28px">New recipient will be added to the next payroll run.</p>
+    <!-- Vault KPI row -->
+    <div class="vault-kpi-row animate-in">
+      <div class="kpi-card green">
+        <div class="kpi-label"><div class="kpi-icon g">🏦</div>Total Vault TVL</div>
+        <div class="kpi-value" id="vaultTvl">$48,200</div>
+        <div class="kpi-change up">↑ earning now</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label"><div class="kpi-icon p">💎</div>Total Earned</div>
+        <div class="kpi-value" id="vaultEarned">$0.00</div>
+        <div class="kpi-change up" id="vaultEarnedSub">↑ accumulating</div>
+      </div>
+      <div class="kpi-card gold">
+        <div class="kpi-label"><div class="kpi-icon go">⏳</div>Next Payout</div>
+        <div class="kpi-value">Daily</div>
+        <div class="kpi-change neutral">Auto-compounding</div>
+      </div>
+    </div>
+
+    <!-- Vault hero banner -->
+    <div class="vault-hero animate-in">
+      <div class="vault-hero-left">
+        <div class="vault-hero-title">Settlo Yield Vault</div>
+        <div class="vault-hero-sub">Deposit idle USDC into the vault and earn yield while your payroll treasury sits. Flexible withdrawals anytime or lock for boosted APY. Powered by Arc's native settlement layer.</div>
+      </div>
+      <div class="vault-hero-stats">
+        <div class="vault-hero-stat">
+          <div class="val" style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Syne',sans-serif;font-size:28px;font-weight:800">8.5%</div>
+          <div class="lbl">Flexible APY</div>
+        </div>
+        <div class="vault-hero-stat">
+          <div class="val" style="background:linear-gradient(135deg,#a98fff,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Syne',sans-serif;font-size:28px;font-weight:800">14.2%</div>
+          <div class="lbl">Locked APY</div>
+        </div>
+        <div class="vault-hero-stat">
+          <div class="val" style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--text)">$2.1M</div>
+          <div class="lbl">Protocol TVL</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vault cards grid -->
+    <div class="vault-grid">
+
+      <!-- FLEXIBLE VAULT -->
+      <div class="vault-card flexible animate-in">
+        <div class="vault-card-header">
+          <div>
+            <div class="vault-card-title">Flexible Vault</div>
+            <div class="vault-card-sub">Withdraw anytime · No lockup · Daily yield</div>
+          </div>
+          <div class="vault-apy-badge">
+            <div class="vault-apy-num">8.5%</div>
+            <div class="vault-apy-label">APY</div>
+          </div>
+        </div>
+
+        <!-- Balance -->
+        <div class="vault-balance-box">
+          <div class="vault-balance-label">Your Deposited Balance</div>
+          <div class="vault-balance-main" id="flexBalance">$25,000.00</div>
+          <div class="vault-balance-sub" id="flexBalanceSub">25,000.000000 USDC</div>
+        </div>
+
+        <!-- Live earnings ticker -->
+        <div class="vault-earnings-ticker">
+          <div>
+            <div class="vault-earnings-label">Earnings accumulating</div>
+            <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px">Since deposit · real-time</div>
+          </div>
+          <div class="vault-earnings-val" id="flexEarnings">+$0.000000</div>
+        </div>
+
+        <!-- Input -->
+        <div class="vault-input-row">
+          <input type="number" class="vault-input" id="flexInput" placeholder="Enter USDC amount" min="1">
+          <button class="vault-max-btn" onclick="setMax('flexInput', 25000)">MAX</button>
+        </div>
+
+        <!-- Buttons -->
+        <div class="vault-btn-row">
+          <button class="vault-btn-deposit" onclick="vaultDeposit('flex')">Deposit USDC</button>
+          <button class="vault-btn-withdraw" onclick="vaultWithdraw('flex')">Withdraw</button>
+        </div>
+
+        <!-- Meta -->
+        <div class="vault-meta">
+          <div style="height:1px;background:var(--border);margin:4px 0"></div>
+          <div class="vault-meta-row"><span class="k">Daily earnings</span><span class="v green" id="flexDaily">~$5.82</span></div>
+          <div class="vault-meta-row"><span class="k">Monthly projection</span><span class="v green" id="flexMonthly">~$177.08</span></div>
+          <div class="vault-meta-row"><span class="k">Annual projection</span><span class="v green" id="flexAnnual">~$2,125.00</span></div>
+          <div class="vault-meta-row"><span class="k">Lockup</span><span class="v">None — withdraw anytime</span></div>
+          <div class="vault-meta-row"><span class="k">Yield source</span><span class="v">Arc protocol fees</span></div>
+        </div>
+      </div>
+
+      <!-- LOCKED VAULT -->
+      <div class="vault-card locked animate-in">
+        <div class="vault-card-header">
+          <div>
+            <div class="vault-card-title">Locked Vault</div>
+            <div class="vault-card-sub">Lock for boosted yield · Higher APY</div>
+          </div>
+          <div class="vault-apy-badge">
+            <div class="vault-apy-num" id="lockedApyDisplay">14.2%</div>
+            <div class="vault-apy-label">APY</div>
+          </div>
+        </div>
+
+        <!-- Lock period selector -->
+        <div class="lock-period-pills">
+          <button class="lock-pill active" onclick="selectLockPeriod(this, 30, 14.2)">
+            30 Days
+            <span class="apy-hint">14.2% APY</span>
+          </button>
+          <button class="lock-pill" onclick="selectLockPeriod(this, 60, 17.8)">
+            60 Days
+            <span class="apy-hint">17.8% APY</span>
+          </button>
+          <button class="lock-pill" onclick="selectLockPeriod(this, 90, 22.5)">
+            90 Days
+            <span class="apy-hint">22.5% APY</span>
+          </button>
+        </div>
+
+        <!-- Balance -->
+        <div class="vault-balance-box">
+          <div class="vault-balance-label">Your Locked Balance</div>
+          <div class="vault-balance-main" id="lockedBalance">$23,200.00</div>
+          <div class="vault-balance-sub" id="lockedBalanceSub">Unlocks in <span id="lockCountdown">18 days</span></div>
+        </div>
+
+        <!-- Live earnings ticker -->
+        <div class="vault-earnings-ticker">
+          <div>
+            <div class="vault-earnings-label">Earnings accumulating</div>
+            <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px">Boosted · real-time</div>
+          </div>
+          <div class="vault-earnings-val" id="lockedEarnings">+$0.000000</div>
+        </div>
+
+        <!-- Input -->
+        <div class="vault-input-row">
+          <input type="number" class="vault-input" id="lockedInput" placeholder="Enter USDC amount" min="1">
+          <button class="vault-max-btn" onclick="setMax('lockedInput', 23200)">MAX</button>
+        </div>
+
+        <!-- Buttons -->
+        <div class="vault-btn-row">
+          <button class="vault-btn-deposit" onclick="vaultDeposit('locked')">Lock & Earn</button>
+          <button class="vault-btn-withdraw" onclick="vaultWithdraw('locked')" id="lockedWithdrawBtn">Early Withdraw ⚠</button>
+        </div>
+
+        <!-- Meta -->
+        <div class="vault-meta">
+          <div style="height:1px;background:var(--border);margin:4px 0"></div>
+          <div class="vault-meta-row"><span class="k">Selected period</span><span class="v purple" id="lockedPeriodLabel">30 days</span></div>
+          <div class="vault-meta-row"><span class="k">Daily earnings</span><span class="v purple" id="lockedDaily">~$9.02</span></div>
+          <div class="vault-meta-row"><span class="k">At maturity</span><span class="v purple" id="lockedMaturity">~$270.72</span></div>
+          <div class="vault-meta-row"><span class="k">Early exit penalty</span><span class="v" style="color:var(--warn)">10% of earned yield</span></div>
+          <div class="vault-meta-row"><span class="k">Yield source</span><span class="v">Arc protocol fees + boost</span></div>
+        </div>
+      </div>
+
+      <!-- VAULT ACTIVITY FEED -->
+      <div class="vault-total-card animate-in">
+        <div class="payroll-header">
+          <h3>Vault Activity</h3>
+          <div class="arc-badge"><div class="dot"></div>Live</div>
+        </div>
+        <div class="vault-tx-feed" id="vaultTxFeed">
+          <div class="vault-tx">
+            <div class="vault-tx-icon dep">⬇</div>
+            <div class="vault-tx-meta"><div class="vault-tx-desc">Flexible Vault Deposit</div><div class="vault-tx-date">May 1, 2026 · 0x3f2a...9c1d</div></div>
+            <div class="vault-tx-amount" style="color:var(--accent)">+$25,000</div>
+          </div>
+          <div class="vault-tx">
+            <div class="vault-tx-icon ear">✦</div>
+            <div class="vault-tx-meta"><div class="vault-tx-desc">Yield Credited — Flexible</div><div class="vault-tx-date">May 9, 2026 · Auto-compound</div></div>
+            <div class="vault-tx-amount" style="color:var(--accent)">+$52.40</div>
+          </div>
+          <div class="vault-tx">
+            <div class="vault-tx-icon dep">🔒</div>
+            <div class="vault-tx-meta"><div class="vault-tx-desc">Locked Vault — 30 Day</div><div class="vault-tx-date">Apr 22, 2026 · 0x7c21...e94f</div></div>
+            <div class="vault-tx-amount" style="color:#a98fff">+$23,200</div>
+          </div>
+          <div class="vault-tx">
+            <div class="vault-tx-icon ear">✦</div>
+            <div class="vault-tx-meta"><div class="vault-tx-desc">Yield Credited — Locked</div><div class="vault-tx-date">May 9, 2026 · Auto-compound</div></div>
+            <div class="vault-tx-amount" style="color:#a98fff">+$161.44</div>
+          </div>
+          <div class="vault-tx">
+            <div class="vault-tx-icon wit">⬆</div>
+            <div class="vault-tx-meta"><div class="vault-tx-desc">Flexible Withdrawal</div><div class="vault-tx-date">Mar 15, 2026 · 0x3f2a...9c1d</div></div>
+            <div class="vault-tx-amount" style="color:var(--warn)">-$10,000</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+<!-- ── ADD EMPLOYEE MODAL ── -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeAddModal()">×</button>
+    <div class="modal-title">Add Employee</div>
+    <div class="modal-sub">New recipient will be added to the next payroll run.</div>
     <div class="send-form">
       <div class="form-row">
-        <div class="form-group">
-          <div class="form-label">Full Name</div>
-          <input type="text" class="form-input" placeholder="Jane Smith" id="newName">
-        </div>
-        <div class="form-group">
-          <div class="form-label">Role / Title</div>
-          <input type="text" class="form-input" placeholder="Frontend Engineer" id="newRole">
-        </div>
+        <div class="form-group"><div class="form-label">Full Name</div><input type="text" class="form-input" placeholder="Jane Smith" id="newName"></div>
+        <div class="form-group"><div class="form-label">Role / Title</div><input type="text" class="form-input" placeholder="Frontend Engineer" id="newRole"></div>
       </div>
-      <div class="form-group">
-        <div class="form-label">Wallet Address</div>
-        <input type="text" class="form-input" placeholder="0x..." id="newWallet" style="font-family:'DM Mono',monospace">
-      </div>
+      <div class="form-group"><div class="form-label">Wallet Address</div><input type="text" class="form-input" placeholder="0x..." id="newWallet" style="font-family:'DM Mono',monospace"></div>
       <div class="form-row">
-        <div class="form-group">
-          <div class="form-label">Monthly Amount (USDC equiv.)</div>
-          <input type="number" class="form-input" placeholder="5000" id="newAmount">
-        </div>
-        <div class="form-group">
-          <div class="form-label">Payout Currency</div>
+        <div class="form-group"><div class="form-label">Monthly Amount (USDC)</div><input type="number" class="form-input" placeholder="5000" id="newAmount"></div>
+        <div class="form-group"><div class="form-label">Payout Currency</div>
           <select class="form-select" id="newCurrency">
             <option value="usdc">USDC</option>
             <option value="eurc">EURC</option>
             <option value="jpyc">JPYC</option>
-            <option value="brl">BRL Stablecoin</option>
+            <option value="brl">BRL</option>
             <option value="krw">KRW</option>
-            <option value="aud">AUDC</option>
+            <option value="audc">AUDC</option>
           </select>
         </div>
       </div>
@@ -1450,244 +1100,865 @@
   </div>
 </div>
 
+<!-- ── EDIT EMPLOYEE MODAL ── -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeEditModal()">×</button>
+    <div class="modal-title">Edit Employee</div>
+    <div class="modal-sub">Changes apply from the next payroll run.</div>
+    <div class="send-form">
+      <input type="hidden" id="editRowId">
+      <div class="form-row">
+        <div class="form-group"><div class="form-label">Full Name</div><input type="text" class="form-input" id="editName"></div>
+        <div class="form-group"><div class="form-label">Role / Title</div><input type="text" class="form-input" id="editRole"></div>
+      </div>
+      <div class="form-group"><div class="form-label">Wallet Address</div><input type="text" class="form-input" id="editWallet" style="font-family:'DM Mono',monospace"></div>
+      <div class="form-row">
+        <div class="form-group"><div class="form-label">Monthly Amount</div><input type="number" class="form-input" id="editAmount"></div>
+        <div class="form-group"><div class="form-label">Payout Currency</div>
+          <select class="form-select" id="editCurrency">
+            <option value="usdc">USDC</option>
+            <option value="eurc">EURC</option>
+            <option value="jpyc">JPYC</option>
+            <option value="brl">BRL</option>
+            <option value="krw">KRW</option>
+            <option value="audc">AUDC</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn-primary" style="flex:1;padding:14px;font-size:15px;border-radius:12px" onclick="saveEmployee()">Save Changes →</button>
+        <button class="btn-sm ghost" style="padding:14px 20px;border-radius:12px;font-size:14px" onclick="closeEditModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-// Cursor
+// ── GLOBALS ──
+const USDC_CONTRACT = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
+const ARC_CHAIN_ID  = '0x4CEF52'; // 5042002
+
+// ── Smart network switcher ──
+// Tries to switch to Arc. If already on it (any RPC), does nothing.
+// If not found, adds it. Never blocks the TX — MetaMask will catch real errors.
+async function ensureArcNetwork() {
+  try {
+    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    if(chainId === ARC_CHAIN_ID) return; // already on Arc, proceed
+
+    // Try switching first
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: ARC_CHAIN_ID }]
+      });
+    } catch(switchErr) {
+      // 4902 = network not in MetaMask — add it
+      if(switchErr.code === 4902) {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: ARC_CHAIN_ID,
+            chainName: 'Arc Testnet',
+            nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+            rpcUrls: [
+              'https://arc-testnet.drpc.org',
+              'https://rpc.testnet.arc.network'
+            ],
+            blockExplorerUrls: ['https://testnet.arcscan.app']
+          }]
+        });
+      }
+      // Any other error (user rejected switch, etc.) — just continue,
+      // MetaMask will show the real error on the TX itself
+    }
+  } catch(e) {
+    console.warn('ensureArcNetwork:', e.message);
+    // Don't block — let the TX attempt proceed
+  }
+}
+
+// ── Cursor ──
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
-(function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
-  requestAnimationFrame(animRing);
-})();
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+(function animRing(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); })();
 
-// Nav scroll
-window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
-});
+// ── Nav scroll ──
+window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY>40));
 
-// Hero counter animation
+// ── Hero counter ──
 function animateCount(el, target, prefix, suffix, duration) {
-  let start = 0;
-  const step = target / (duration / 16);
-  const timer = setInterval(() => {
-    start = Math.min(start + step, target);
-    el.textContent = prefix + Math.floor(start).toLocaleString() + suffix;
-    if (start >= target) clearInterval(timer);
-  }, 16);
+  let start=0; const step=target/(duration/16);
+  const timer=setInterval(()=>{ start=Math.min(start+step,target); el.textContent=prefix+Math.floor(start).toLocaleString()+suffix; if(start>=target) clearInterval(timer); },16);
 }
-setTimeout(() => {
+setTimeout(()=>{
   animateCount(document.getElementById('heroTvl'), 284910, '$', '', 1800);
   animateCount(document.getElementById('heroEmps'), 2847, '', '', 1600);
   animateCount(document.getElementById('heroSave'), 97, '', '%', 1400);
 }, 400);
 
-// Build mini chart
-const chartData = [218400, 241600, 252100, 259800, 271340, 284910];
-const maxVal = Math.max(...chartData);
-const chart = document.getElementById('miniChart');
-chartData.forEach((v, i) => {
-  const col = document.createElement('div');
-  col.className = 'bar-col';
-  const pct = (v / maxVal) * 100;
-  const isLast = i === chartData.length - 1;
-  col.style.height = pct + '%';
-  col.style.background = isLast
-    ? 'linear-gradient(to top, var(--accent), rgba(79,255,176,0.4))'
-    : `rgba(79,255,176,${0.08 + (i * 0.04)})`;
-  col.innerHTML = `<div class="bar-tip">$${v.toLocaleString()}</div>`;
-  col.style.animationDelay = (i * 80) + 'ms';
+// ── Mini chart ──
+const chartData=[218400,241600,252100,259800,271340,284910];
+const maxVal=Math.max(...chartData);
+const chart=document.getElementById('miniChart');
+chartData.forEach((v,i)=>{
+  const col=document.createElement('div'); col.className='bar-col';
+  col.style.height=(v/maxVal*100)+'%';
+  col.style.background=i===chartData.length-1?'linear-gradient(to top, var(--accent), rgba(79,255,176,0.4))':'rgba(79,255,176,'+(0.08+i*0.04)+')';
+  col.innerHTML=`<div class="bar-tip">$${v.toLocaleString()}</div>`;
   chart.appendChild(col);
 });
 
-// Scroll to app
-function scrollToApp() {
-  document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
-}
+function scrollToApp(){ document.getElementById('dashboard').scrollIntoView({behavior:'smooth'}); }
 
-// Connect wallet toggle
+// ── Connect Wallet ──
 async function toggleConnect(btn) {
-  if (typeof window.ethereum === 'undefined') {
-    alert('MetaMask not found. Install it at metamask.io');
-    return;
-  }
+  if(typeof window.ethereum==='undefined'){ alert('MetaMask not found. Install it at metamask.io'); return; }
   try {
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-    
-    // If not on Arc testnet, ask to switch
-    if (chainId !== '0x4CE752') { // 5042002 in hex
-      await window.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [{
-          chainId: '0x4CE752',
-          chainName: 'Arc Testnet',
-          nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
-          rpcUrls: ['https://rpc.testnet.arc.network'],
-          blockExplorerUrls: ['https://testnet.arcscan.app']
-        }]
-      });
-    }
-    
-    const addr = accounts[0];
-    const short = addr.slice(0,6) + '...' + addr.slice(-4);
-    btn.textContent = short;
-    btn.style.background = 'rgba(79,255,176,0.12)';
-    btn.style.color = 'var(--accent)';
-    btn.style.border = '1px solid rgba(79,255,176,0.2)';
-  } catch(e) {
-    console.error(e);
+    const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
+    await ensureArcNetwork();
+    const addr=accounts[0];
+    const short=addr.slice(0,6)+'...'+addr.slice(-4);
+    btn.textContent=short;
+    btn.style.background='rgba(79,255,176,0.12)';
+    btn.style.color='var(--accent)';
+    btn.style.border='1px solid rgba(79,255,176,0.2)';
+    btn.style.fontSize='12px';
+    btn.style.fontFamily="'DM Mono', monospace";
+  } catch(e){ console.error(e); }
+}
+
+// ── Pill select — persist state ──
+function selectPill(el){
+  el.closest('.schedule-pills').querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── Tab switch ──
+function switchTab(el){ el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+
+// ── PRIVACY TOGGLE (FULLY FUNCTIONAL) ──
+let privacyOn = true; // starts ON matching the UI
+
+function togglePrivacy() {
+  privacyOn = !privacyOn;
+  const toggle = document.getElementById('privacyToggle');
+  const row = document.getElementById('privacyRow');
+  const label = document.getElementById('privacyLabel');
+  const sub = document.getElementById('privacySub');
+
+  if(privacyOn){
+    toggle.classList.add('on');
+    row.classList.add('on');
+    label.textContent = '🔒 Shield transaction details';
+    sub.textContent = 'Amounts & recipients hidden on-chain. Auditable via ZK proof.';
+    sub.style.color = 'var(--accent)';
+    // Mask amounts in team table
+    document.querySelectorAll('.tx-amount').forEach(el => {
+      el.style.filter = 'blur(5px)';
+      el.style.userSelect = 'none';
+    });
+    document.querySelectorAll('.tx-usdc').forEach(el => {
+      el.style.filter = 'blur(4px)';
+      el.style.userSelect = 'none';
+    });
+    // Mask history amounts
+    document.querySelectorAll('.history-amount').forEach(el => {
+      el.style.filter = 'blur(5px)';
+      el.style.userSelect = 'none';
+    });
+  } else {
+    toggle.classList.remove('on');
+    row.classList.remove('on');
+    label.textContent = 'Shield transaction details';
+    sub.textContent = 'Transaction details visible on-chain.';
+    sub.style.color = 'var(--text3)';
+    // Unmask amounts
+    document.querySelectorAll('.tx-amount, .tx-usdc, .history-amount').forEach(el => {
+      el.style.filter = 'none';
+      el.style.userSelect = 'auto';
+    });
   }
 }
-// Pill select
-function selectPill(el) {
-  el.closest('.schedule-pills').querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-}
 
-// Tab switch
-function switchTab(el) {
-  el.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-}
-
-// Toggle
-document.querySelectorAll('.toggle').forEach(t => {
-  t.addEventListener('click', () => t.classList.toggle('on'));
+// Start with privacy ON — mask amounts on load
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.tx-amount').forEach(el => { el.style.filter='blur(5px)'; el.style.userSelect='none'; });
+  document.querySelectorAll('.tx-usdc').forEach(el => { el.style.filter='blur(4px)'; el.style.userSelect='none'; });
+  document.querySelectorAll('.history-amount').forEach(el => { el.style.filter='blur(5px)'; el.style.userSelect='none'; });
 });
 
-// Modal
-function showAddModal() {
-  const m = document.getElementById('addModal');
-  m.style.display = 'flex';
-}
-function closeModal() {
-  document.getElementById('addModal').style.display = 'none';
-}
-document.getElementById('addModal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
+// ── ADD MODAL ──
+function showAddModal(){ document.getElementById('addModal').classList.add('open'); }
+function closeAddModal(){ document.getElementById('addModal').classList.remove('open'); }
+document.getElementById('addModal').addEventListener('click', function(e){ if(e.target===this) closeAddModal(); });
 
-// Add employee
-const colors = ['rgba(79,255,176,0.1)', 'rgba(0,212,255,0.1)', 'rgba(123,97,255,0.1)', 'rgba(245,200,66,0.1)', 'rgba(255,107,53,0.1)'];
-const textColors = ['var(--accent)', 'var(--accent2)', '#a98fff', 'var(--gold)', 'var(--warn)'];
-let empIdx = 5;
-function addEmployee() {
-  const name = document.getElementById('newName').value.trim() || 'New Employee';
-  const role = document.getElementById('newRole').value.trim() || 'Team Member';
-  const wallet = document.getElementById('newWallet').value.trim() || '0x0000...0000';
-  const amount = document.getElementById('newAmount').value || '0';
-  const currency = document.getElementById('newCurrency').value;
-  const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  const c = empIdx % colors.length;
-  const tbody = document.getElementById('empTableBody');
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td><div class="emp-info"><div class="emp-avatar" style="background:${colors[c]};color:${textColors[c]}">${initials}</div><div><div class="emp-name">${name}</div><div class="emp-role">${wallet.slice(0,8)}...${wallet.slice(-4)}</div></div></div></td>
-    <td style="color:var(--text2)">${role}</td>
+// ── EDIT MODAL ──
+function openEditModal(btn, name, role, wallet, amount, currency) {
+  document.getElementById('editName').value = name;
+  document.getElementById('editRole').value = role;
+  document.getElementById('editWallet').value = wallet;
+  document.getElementById('editAmount').value = amount;
+  document.getElementById('editCurrency').value = currency;
+  // Store reference to this row
+  const row = btn.closest('tr');
+  document.getElementById('editRowId').value = row.dataset.id;
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEditModal(){ document.getElementById('editModal').classList.remove('open'); }
+document.getElementById('editModal').addEventListener('click', function(e){ if(e.target===this) closeEditModal(); });
+
+// ── RECALCULATE PAYROLL TOTAL FROM ROSTER ──
+function recalculatePayrollTotal() {
+  const rows = document.querySelectorAll('#empTableBody tr');
+  let total = 0;
+  let count = 0;
+  rows.forEach(row => {
+    const editBtn = row.querySelector('.btn-sm.ghost');
+    if(!editBtn) return;
+    const match = editBtn.getAttribute('onclick')?.match(/openEditModal\(this,'[^']*','[^']*','[^']*','([^']*)','([^']*)'\)/);
+    if(!match) return;
+    const amt = parseFloat(match[1]);
+    if(!isNaN(amt) && amt > 0){ total += amt; count++; }
+  });
+
+  // Update Run Payroll button text
+  const runBtn = document.getElementById('runBtn');
+  if(runBtn) runBtn.textContent = `Run Payroll — $${total.toLocaleString()} USDC →`;
+
+  // Update gas estimate
+  const gasEl = document.getElementById('gasEstimate');
+  if(gasEl) gasEl.textContent = `Est. total gas: $${(count * 0.001).toFixed(3)} · ~0.4s finality · ${count} recipients`;
+
+  // Update KPI disbursed
+  const kpiEl = document.querySelector('.kpi-value');
+  if(kpiEl) kpiEl.textContent = '$'+total.toLocaleString();
+}
+
+function saveEmployee() {
+  const name = document.getElementById('editName').value.trim();
+  const role = document.getElementById('editRole').value.trim();
+  const wallet = document.getElementById('editWallet').value.trim();
+  const amount = document.getElementById('editAmount').value;
+  const currency = document.getElementById('editCurrency').value;
+  const rowId = document.getElementById('editRowId').value;
+
+  if(!name){ alert('Name is required'); return; }
+
+  // Find and update the row
+  const row = document.querySelector(`tr[data-id="${rowId}"]`);
+  if(row){
+    const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    row.querySelector('.emp-name').textContent = name;
+    row.querySelector('.emp-wallet').textContent = wallet.slice(0,8)+'...'+wallet.slice(-4);
+    row.querySelector('.emp-role-cell').textContent = role;
+    const amountEl = row.querySelector('.tx-amount');
+    const usdcEl = row.querySelector('.tx-usdc');
+    const newAmountText = '$'+parseInt(amount).toLocaleString();
+    amountEl.dataset.amount = newAmountText;
+    amountEl.textContent = newAmountText;
+    usdcEl.textContent = currency.toUpperCase()+' equiv.';
+    usdcEl.dataset.usdc = currency.toUpperCase()+' equiv.';
+    const tagEl = row.querySelector('.tag:not(.active):not(.pending):not(.processing)');
+    if(tagEl){ tagEl.className=`tag ${currency}`; tagEl.textContent=currency.toUpperCase(); }
+    const editBtn = row.querySelector('.btn-sm.ghost');
+    editBtn.setAttribute('onclick', `openEditModal(this,'${name}','${role}','${wallet}','${amount}','${currency}')`);
+    if(privacyOn){ amountEl.style.filter='blur(5px)'; usdcEl.style.filter='blur(4px)'; }
+    row.style.background='rgba(79,255,176,0.06)';
+    setTimeout(()=>{ row.style.background=''; },800);
+  }
+
+  // ── Recalculate payroll total from roster ──
+  recalculatePayrollTotal();
+  closeEditModal();
+}
+
+// ── ADD EMPLOYEE ──
+const colors=['rgba(79,255,176,0.1)','rgba(0,212,255,0.1)','rgba(123,97,255,0.1)','rgba(245,200,66,0.1)','rgba(255,107,53,0.1)'];
+const textColors=['var(--accent)','var(--accent2)','#a98fff','var(--gold)','var(--warn)'];
+let empIdx=6;
+function addEmployee(){
+  const name=document.getElementById('newName').value.trim()||'New Employee';
+  const role=document.getElementById('newRole').value.trim()||'Team Member';
+  const wallet=document.getElementById('newWallet').value.trim()||'0x0000...0000';
+  const amount=document.getElementById('newAmount').value||'0';
+  const currency=document.getElementById('newCurrency').value;
+  const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const c=empIdx%colors.length;
+  const tbody=document.getElementById('empTableBody');
+  const tr=document.createElement('tr');
+  tr.dataset.id=empIdx;
+  tr.innerHTML=`
+    <td><div class="emp-info"><div class="emp-avatar" style="background:${colors[c]};color:${textColors[c]}">${initials}</div><div><div class="emp-name">${name}</div><div class="emp-role emp-wallet">${wallet.slice(0,8)}...${wallet.slice(-4)}</div></div></div></td>
+    <td style="color:var(--text2)" class="emp-role-cell">${role}</td>
     <td><span class="tag ${currency}">${currency.toUpperCase()}</span></td>
-    <td><div class="amount-cell"><div class="amount-main">$${parseInt(amount).toLocaleString()}</div><div class="amount-sub">USDC equiv.</div></div></td>
+    <td><div class="amount-cell"><div class="amount-main tx-amount" data-amount="$${parseInt(amount).toLocaleString()}">$${parseInt(amount).toLocaleString()}</div><div class="amount-sub tx-usdc" data-usdc="${currency.toUpperCase()} equiv.">${currency.toUpperCase()} equiv.</div></div></td>
     <td><span class="tag pending">Pending</span></td>
-    <td><button class="btn-sm ghost" style="padding:6px 12px;font-size:12px">Edit</button></td>
-  `;
-  tr.style.animation = 'fadeUp 0.4s ease both';
+    <td><div class="emp-actions"><button class="btn-sm ghost" style="padding:6px 12px;font-size:12px" onclick="openEditModal(this,'${name}','${role}','${wallet}','${amount}','${currency}')">Edit</button><button class="btn-sm primary" style="padding:6px 12px;font-size:12px" onclick="paySingle(this)">Pay</button><button class="btn-sm danger" style="padding:6px 12px;font-size:12px" onclick="removeEmployee(this)">Remove</button></div></td>`;
+  tr.style.animation='fadeUp 0.4s ease both';
   tbody.appendChild(tr);
+  // Apply privacy if on
+  if(privacyOn){
+    const a=tr.querySelector('.tx-amount'); const u=tr.querySelector('.tx-usdc');
+    if(a){ a.style.filter='blur(5px)'; a.style.userSelect='none'; }
+    if(u){ u.style.filter='blur(4px)'; u.style.userSelect='none'; }
+  }
+  // Update count
   empIdx++;
-  closeModal();
+  const countEl=document.getElementById('empCount');
+  countEl.textContent=parseInt(countEl.textContent)+1;
+  recalculatePayrollTotal();
+  closeAddModal();
 }
 
-// Payroll run trigger
-async function triggerRun(btn) {
-  if (typeof window.ethereum === 'undefined') {
-    alert('Please install MetaMask first');
+// ── REMOVE EMPLOYEE ──
+function removeEmployee(btn) {
+  const row = btn.closest('tr');
+  const name = row.querySelector('.emp-name').textContent;
+  if(!confirm(`Remove ${name} from payroll?\n\nThey will not be included in the next run.`)) return;
+  // Animate out
+  row.style.transition = 'all 0.35s ease';
+  row.style.opacity = '0';
+  row.style.transform = 'translateX(-16px)';
+  row.style.pointerEvents = 'none';
+  setTimeout(() => {
+    row.remove();
+    const countEl = document.getElementById('empCount');
+    const current = parseInt(countEl.textContent);
+    if(current > 0) countEl.textContent = current - 1;
+    recalculatePayrollTotal();
+  }, 350);
+}
+
+// ── PAY SINGLE EMPLOYEE ──
+async function paySingle(btn) {
+  if(typeof window.ethereum === 'undefined'){ alert('Please install MetaMask'); return; }
+
+  const row = btn.closest('tr');
+  const name = row.querySelector('.emp-name').textContent;
+  const editBtn = row.querySelector('.btn-sm.ghost');
+  const match = editBtn?.getAttribute('onclick')?.match(/openEditModal\(this,'[^']*','[^']*','([^']*)','([^']*)','([^']*)'\)/);
+
+  if(!match){ alert(`${name} has no valid wallet.\nClick Edit and enter a full 0x... address.`); return; }
+
+  const wallet   = match[1];
+  const amount   = parseFloat(match[2]);
+  const currency = match[3];
+
+  if(!wallet.startsWith('0x') || wallet.length < 20){
+    alert(`${name} has no valid wallet address.\nClick Edit and enter their full 0x... address first.`);
+    return;
+  }
+  if(isNaN(amount) || amount <= 0){
+    alert(`${name} has no valid amount set.\nClick Edit to set their monthly amount.`);
     return;
   }
 
-  try {
-    // Make sure they're connected
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const sender = accounts[0];
+  const confirmed = confirm(
+    `Pay ${name}\n` +
+    `─────────────────────\n` +
+    `Amount:  $${amount.toLocaleString()} ${currency.toUpperCase()}\n` +
+    `To:      ${wallet.slice(0,10)}...${wallet.slice(-6)}\n` +
+    `Network: Arc Testnet\n\n` +
+    `Confirm payment?`
+  );
+  if(!confirmed) return;
 
-    btn.textContent = '⟳ Waiting for MetaMask...';
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const sender   = accounts[0];
+    await ensureArcNetwork();
+
+    btn.textContent = '⟳';
+    btn.disabled = true;
     btn.style.opacity = '0.7';
 
-    // USDC contract on Arc Testnet
-    const USDC_CONTRACT = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
-    
-    // Test recipient — replace with a real wallet for live testing
-    const RECIPIENT = '0x000000000000000000000000000000000000dEaD';
-    
-    // Send 0.01 USDC as a test (in hex, 6 decimals)
-    // 0.01 USDC = 10000 in raw units
-    const amount = '0x2710';
-
-    // ERC20 transfer function call
-    const data = '0xa9059cbb' +
-      RECIPIENT.replace('0x', '').padStart(64, '0') +
-      amount.replace('0x', '').padStart(64, '0');
+    // Arc native USDC — 18 decimals, send as value
+    const rawAmount = (BigInt(Math.round(amount * 100)) * BigInt('10000000000000000')).toString(16);
+    const value = '0x' + rawAmount;
 
     const txHash = await window.ethereum.request({
       method: 'eth_sendTransaction',
-      params: [{
-        from: sender,
-        to: USDC_CONTRACT,
-        data: data,
-        chainId: '0x4CE752' // Arc Testnet
-      }]
+      params: [{ from: sender, to: wallet, value, chainId: ARC_CHAIN_ID }]
     });
 
-    btn.textContent = '✓ TX Submitted!';
+    // Mark as paid
+    const statusTag = row.querySelector('td:nth-child(5) .tag');
+    if(statusTag){ statusTag.className='tag active'; statusTag.textContent='Paid'; }
+
+    btn.textContent = '✓';
     btn.style.opacity = '1';
     btn.style.background = 'rgba(79,255,176,0.15)';
     btn.style.color = 'var(--accent)';
-    btn.style.border = '1px solid rgba(79,255,176,0.3)';
+    btn.style.border = '1px solid rgba(79,255,176,0.2)';
 
-    // Show explorer link
-    const msg = document.createElement('div');
-    msg.style.cssText = 'text-align:center;margin-top:10px;font-size:12px;font-family:"DM Mono",monospace;';
-    msg.innerHTML = `TX sent → <a href="https://testnet.arcscan.app/tx/${txHash}" target="_blank" style="color:var(--accent2)">View on ArcScan ↗</a>`;
-    btn.parentNode.appendChild(msg);
+    // ArcScan link under button
+    const link = document.createElement('div');
+    link.style.cssText = 'font-size:10px;font-family:"DM Mono",monospace;margin-top:4px;';
+    link.innerHTML = `<a href="https://testnet.arcscan.app/tx/${txHash}" target="_blank" style="color:var(--accent2)">ArcScan ↗</a>`;
+    btn.closest('td').appendChild(link);
 
-    setTimeout(() => {
-      btn.textContent = 'Run Payroll — $284,910 USDC →';
+    setTimeout(()=>{
+      btn.textContent = 'Pay';
       btn.style.background = '';
       btn.style.color = '';
       btn.style.border = '';
-    }, 5000);
+      btn.disabled = false;
+    }, 8000);
 
   } catch(e) {
-    btn.textContent = 'Transaction rejected';
+    btn.textContent = e.message?.includes('rejected') ? '✗' : '✗ err';
+    btn.style.color = 'var(--warn)';
     btn.style.opacity = '1';
-    setTimeout(() => {
-      btn.textContent = 'Run Payroll — $284,910 USDC →';
-    }, 3000);
-    console.error(e);
+    btn.disabled = false;
+    setTimeout(()=>{ btn.textContent='Pay'; btn.style.color=''; }, 3000);
+    console.error('paySingle:', e);
   }
 }
 
-// FX rate ticker — subtle live updates
-setInterval(() => {
-  const rateEls = document.querySelectorAll('.fx-rate-main');
-  rateEls.forEach(el => {
-    el.style.transition = 'opacity 0.3s';
-    el.style.opacity = '0.5';
-    setTimeout(() => { el.style.opacity = '1'; }, 300);
-  });
-}, 8000);
+// ── REAL MULTI-EMPLOYEE PAYROLL DISPATCHER ──
+async function triggerRun(btn) {
+  if(typeof window.ethereum==='undefined'){ alert('Please install MetaMask'); return; }
 
-// Animate cards on scroll
+  // uses global USDC_CONTRACT defined in vault engine
+
+  // ── Step 1: Read every employee from the roster table ──
+  const rows = document.querySelectorAll('#empTableBody tr');
+  const employees = [];
+
+  rows.forEach(row => {
+    // Get full wallet from edit button onclick attribute
+    const editBtn = row.querySelector('.btn-sm.ghost');
+    if(!editBtn) return;
+    const onclickStr = editBtn.getAttribute('onclick') || '';
+    // Extract wallet — 3rd argument in openEditModal(this,'Name','Role','WALLET','amount','currency')
+    const match = onclickStr.match(/openEditModal\(this,'[^']*','[^']*','([^']*)','([^']*)','([^']*)'\)/);
+    if(!match) return;
+
+    const wallet  = match[1]; // full wallet address
+    const amount  = parseFloat(match[2]); // monthly amount in USDC equivalent
+    const currency = match[3];
+    const name    = row.querySelector('.emp-name')?.textContent || 'Unknown';
+
+    // Skip if wallet looks invalid
+    if(!wallet || !wallet.startsWith('0x') || wallet.length < 10) return;
+    if(isNaN(amount) || amount <= 0) return;
+
+    employees.push({ name, wallet, amount, currency });
+  });
+
+  if(employees.length === 0){
+    alert('No valid employees with wallet addresses found.\nMake sure each employee has a full 0x... wallet address.');
+    return;
+  }
+
+  // ── Step 2: Show summary confirm dialog ──
+  const totalUSDC = employees.reduce((sum, e) => sum + e.amount, 0);
+  const summary = employees.map(e => `• ${e.name}: $${e.amount.toLocaleString()} USDC → ${e.wallet.slice(0,8)}...${e.wallet.slice(-4)}`).join('\n');
+  const confirmed = confirm(
+    `PAYROLL RUN SUMMARY\n` +
+    `─────────────────────\n` +
+    `${employees.length} recipients\n` +
+    `Total: $${totalUSDC.toLocaleString()} USDC\n\n` +
+    `${summary}\n\n` +
+    `Confirm and send all transactions?`
+  );
+  if(!confirmed) return;
+
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const sender = accounts[0];
+
+    // ── Step 3: Auto-switch to Arc Network if needed ──
+    await ensureArcNetwork();
+
+    // ── Step 4: Dispatch one TX per employee ──
+    btn.disabled = true;
+    const resultEl = document.getElementById('txResult');
+    resultEl.innerHTML = '';
+    resultEl.style.cssText = 'margin-top:12px;font-size:12px;font-family:"DM Mono",monospace;display:flex;flex-direction:column;gap:6px;';
+
+    const hashes = [];
+    let successCount = 0;
+    let failCount = 0;
+
+    for(let i = 0; i < employees.length; i++){
+      const emp = employees[i];
+      btn.textContent = `⟳ Sending ${i+1}/${employees.length} — ${emp.name}...`;
+      btn.style.opacity = '0.85';
+
+      // Show pending row
+      const pendingRow = document.createElement('div');
+      pendingRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);';
+      pendingRow.innerHTML = `
+        <span style="color:var(--text2)">${emp.name}</span>
+        <span style="color:var(--text3)">$${emp.amount.toLocaleString()} USDC</span>
+        <span id="status-${i}" style="color:var(--gold);font-size:11px">⟳ pending</span>`;
+      resultEl.appendChild(pendingRow);
+
+      try {
+        // Arc native USDC — send as value directly (like ETH)
+        // 18 decimals: $1 = 1_000_000_000_000_000_000 raw units
+        const rawAmount = (BigInt(Math.round(emp.amount * 100)) * BigInt('10000000000000000')).toString(16);
+        const value = '0x' + rawAmount;
+
+        const txHash = await window.ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [{
+            from: sender,
+            to: emp.wallet,   // direct to employee wallet
+            value: value,     // USDC amount as value
+            chainId: ARC_CHAIN_ID
+          }]
+        });
+
+        hashes.push({ name: emp.name, hash: txHash });
+        successCount++;
+
+        // Update row to success
+        const statusEl = document.getElementById(`status-${i}`);
+        if(statusEl){
+          statusEl.style.color = 'var(--accent)';
+          statusEl.innerHTML = `<a href="https://testnet.arcscan.app/tx/${txHash}" target="_blank" style="color:var(--accent2);text-decoration:none">✓ ${txHash.slice(0,10)}... ↗</a>`;
+        }
+
+        // Mark table row as paid
+        const tableRows = document.querySelectorAll('#empTableBody tr');
+        tableRows.forEach(tr => {
+          const n = tr.querySelector('.emp-name')?.textContent;
+          if(n === emp.name){
+            const statusTag = tr.querySelector('td:nth-child(5) .tag');
+            if(statusTag){ statusTag.className='tag active'; statusTag.textContent='Paid'; }
+          }
+        });
+
+      } catch(txErr) {
+        failCount++;
+        const statusEl = document.getElementById(`status-${i}`);
+        if(statusEl){
+          statusEl.style.color = 'var(--warn)';
+          statusEl.textContent = txErr.message?.includes('rejected') ? '❌ rejected' : '❌ failed';
+        }
+        console.error(`TX failed for ${emp.name}:`, txErr);
+        // Continue to next employee even if one fails
+      }
+    }
+
+    // ── Step 5: Final summary ──
+    btn.disabled = false;
+    if(failCount === 0){
+      btn.textContent = `✓ All ${successCount} payments sent!`;
+      btn.style.background = 'rgba(79,255,176,0.15)';
+      btn.style.color = 'var(--accent)';
+      btn.style.border = '1px solid rgba(79,255,176,0.3)';
+      btn.style.opacity = '1';
+    } else {
+      btn.textContent = `⚠ ${successCount} sent · ${failCount} failed`;
+      btn.style.color = 'var(--gold)';
+      btn.style.opacity = '1';
+    }
+
+    // Add total summary row with accurate amounts
+    const sentTotal = employees.slice(0, successCount).reduce((s,e) => s + e.amount, 0);
+    const summaryRow = document.createElement('div');
+    summaryRow.style.cssText = 'display:flex;justify-content:space-between;padding:10px 12px;background:rgba(79,255,176,0.06);border-radius:8px;border:1px solid rgba(79,255,176,0.15);margin-top:4px;font-weight:700;';
+    summaryRow.innerHTML = `
+      <span style="color:var(--accent)">✓ ${successCount}/${employees.length} payments dispatched</span>
+      <span style="color:var(--text2)">$${sentTotal.toLocaleString('en-US',{minimumFractionDigits:2})} USDC sent</span>`;
+    resultEl.appendChild(summaryRow);
+
+    // Reset btn text to current calculated total (not hardcoded)
+    setTimeout(()=>{
+      recalculatePayrollTotal();
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.style.border = '';
+    }, 10000);
+
+  } catch(e){
+    btn.textContent = e.message?.includes('rejected') ? '❌ Rejected by user' : '❌ Run Failed';
+    btn.style.color = 'var(--warn)';
+    btn.style.opacity = '1';
+    btn.disabled = false;
+    setTimeout(()=>{ recalculatePayrollTotal(); btn.style.color=''; }, 3000);
+    console.error('Payroll run error:', e);
+  }
+}
+
+// ── FX ticker ──
+setInterval(()=>{
+  document.querySelectorAll('.fx-rate-main').forEach(el=>{ el.style.transition='opacity 0.3s'; el.style.opacity='0.5'; setTimeout(()=>el.style.opacity='1',300); });
+},8000);
+
+// ── Scroll observer — only fires ONCE per element, never resets ──
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => {
-    if (e.isIntersecting) {
+    if(e.isIntersecting && !e.target.dataset.animated){
+      e.target.dataset.animated = 'true';
       e.target.style.animation = 'fadeUp 0.6s ease both';
       observer.unobserve(e.target);
     }
   });
-}, { threshold: 0.1 });
-document.querySelectorAll('.card, .kpi-card, .run-status').forEach(el => observer.observe(el));
+}, { threshold: 0.08 });
+document.querySelectorAll('.card,.kpi-card,.run-status,.vault-card,.vault-hero,.vault-kpi-row,.vault-total-card').forEach(el => observer.observe(el));
+// ── VAULT ENGINE ──
+// USDC_CONTRACT already declared globally above
+
+// Vault state
+const vault = {
+  flex: { balance: 25000, apy: 0.085, depositTime: Date.now() - (8 * 24 * 60 * 60 * 1000) },
+  locked: { balance: 23200, apy: 0.142, period: 30, depositTime: Date.now() - (12 * 24 * 60 * 60 * 1000) }
+};
+
+let totalEarned = 0;
+let flexEarnedSession = 0;
+let lockedEarnedSession = 0;
+const sessionStart = Date.now();
+
+// Per-second yield rates
+function flexPerSecond()   { return vault.flex.balance   * vault.flex.apy   / 365 / 24 / 3600; }
+function lockedPerSecond() { return vault.locked.balance * vault.locked.apy / 365 / 24 / 3600; }
+
+// Live earnings ticker — updates every 100ms for smooth counter
+setInterval(() => {
+  const elapsed = (Date.now() - sessionStart) / 1000;
+  flexEarnedSession   = flexPerSecond()   * elapsed;
+  lockedEarnedSession = lockedPerSecond() * elapsed;
+  totalEarned = flexEarnedSession + lockedEarnedSession;
+
+  // Flexible ticker
+  const flexEl = document.getElementById('flexEarnings');
+  if(flexEl) flexEl.textContent = '+$' + flexEarnedSession.toFixed(6);
+
+  // Locked ticker
+  const lockedEl = document.getElementById('lockedEarnings');
+  if(lockedEl) lockedEl.textContent = '+$' + lockedEarnedSession.toFixed(6);
+
+  // KPI total earned
+  const earnedEl = document.getElementById('vaultEarned');
+  if(earnedEl) earnedEl.textContent = '$' + totalEarned.toFixed(4);
+
+}, 100);
+
+// Update projections when balance changes
+function updateProjections() {
+  // Flexible
+  const fDaily   = vault.flex.balance * vault.flex.apy / 365;
+  const fMonthly = fDaily * 30;
+  const fAnnual  = vault.flex.balance * vault.flex.apy;
+  const fd = document.getElementById('flexDaily');
+  const fm = document.getElementById('flexMonthly');
+  const fa = document.getElementById('flexAnnual');
+  if(fd) fd.textContent = '~$' + fDaily.toFixed(2);
+  if(fm) fm.textContent = '~$' + fMonthly.toFixed(2);
+  if(fa) fa.textContent = '~$' + fAnnual.toFixed(2);
+
+  // Locked
+  const lDaily    = vault.locked.balance * vault.locked.apy / 365;
+  const lMaturity = lDaily * vault.locked.period;
+  const ld = document.getElementById('lockedDaily');
+  const lm = document.getElementById('lockedMaturity');
+  if(ld) ld.textContent = '~$' + lDaily.toFixed(2);
+  if(lm) lm.textContent = '~$' + lMaturity.toFixed(2);
+
+  // TVL
+  const tvlEl = document.getElementById('vaultTvl');
+  if(tvlEl) tvlEl.textContent = '$' + (vault.flex.balance + vault.locked.balance).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+updateProjections();
+
+// Lock period selector
+function selectLockPeriod(el, days, apy) {
+  el.closest('.lock-period-pills').querySelectorAll('.lock-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  vault.locked.apy = apy / 100;
+  vault.locked.period = days;
+  document.getElementById('lockedApyDisplay').textContent = apy + '%';
+  document.getElementById('lockedPeriodLabel').textContent = days + ' days';
+  updateProjections();
+}
+
+// MAX button
+function setMax(inputId, balance) {
+  document.getElementById(inputId).value = balance;
+}
+
+// Deposit
+async function vaultDeposit(type) {
+  const inputId = type === 'flex' ? 'flexInput' : 'lockedInput';
+  const amount  = parseFloat(document.getElementById(inputId).value);
+
+  if(!amount || amount <= 0) { alert('Enter a valid USDC amount to deposit.'); return; }
+
+  if(typeof window.ethereum === 'undefined') {
+    // Simulate deposit (no wallet)
+    _simulateDeposit(type, amount);
+    return;
+  }
+
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const sender   = accounts[0];
+
+    // Auto-switch to Arc Network if needed
+    await ensureArcNetwork();
+
+    // Arc native USDC — send as value directly to vault address
+    const VAULT_ADDRESS = type === 'flex'
+      ? '0xF1e2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0'
+      : '0xA1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0';
+
+    const rawAmount = (BigInt(Math.round(amount * 100)) * BigInt('10000000000000000')).toString(16);
+    const value = '0x' + rawAmount;
+
+    const txHash = await window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [{ from: sender, to: VAULT_ADDRESS, value, chainId: ARC_CHAIN_ID }]
+    });
+
+    _simulateDeposit(type, amount, txHash);
+
+  } catch(e) {
+    if(!e.message?.includes('rejected')) alert('Deposit failed: ' + e.message);
+    console.error(e);
+  }
+}
+
+function _simulateDeposit(type, amount, txHash) {
+  // Format amount accurately
+  const fmt = (n) => '$' + parseFloat(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  if(type === 'flex') {
+    vault.flex.balance += parseFloat(amount);
+    const el = document.getElementById('flexBalance');
+    const sub = document.getElementById('flexBalanceSub');
+    if(el) el.textContent = fmt(vault.flex.balance);
+    if(sub) sub.textContent = vault.flex.balance.toFixed(6) + ' USDC';
+    const inp = document.getElementById('flexInput');
+    if(inp) inp.value = '';
+  } else {
+    vault.locked.balance += parseFloat(amount);
+    const el = document.getElementById('lockedBalance');
+    const sub = document.getElementById('lockedBalanceSub');
+    if(el) el.textContent = fmt(vault.locked.balance);
+    if(sub) sub.innerHTML = 'Unlocks in <span id="lockCountdown">' + vault.locked.period + ' days</span>';
+    const inp = document.getElementById('lockedInput');
+    if(inp) inp.value = '';
+  }
+  updateProjections();
+  _addVaultTx(
+    'dep',
+    type === 'flex' ? 'Flexible Vault Deposit' : 'Locked Vault Deposit — ' + vault.locked.period + 'd',
+    amount,
+    type === 'flex' ? 'var(--accent)' : '#a98fff',
+    txHash
+  );
+}
+
+// Withdraw
+async function vaultWithdraw(type) {
+  const balance = type === 'flex' ? vault.flex.balance : vault.locked.balance;
+  if(balance <= 0) { alert('No balance to withdraw.'); return; }
+
+  const fmt = (n) => '$' + parseFloat(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  // ── Confirmation required ──
+  const earnedSoFar = type === 'flex' ? flexEarnedSession : lockedEarnedSession;
+  let penalty = 0;
+  let finalAmount = balance;
+
+  if(type === 'locked') {
+    penalty = earnedSoFar * 0.10;
+    finalAmount = balance + earnedSoFar - penalty;
+    const confirmed = confirm(
+      `⚠ Early Withdrawal — Locked Vault\n` +
+      `─────────────────────────────\n` +
+      `Locked balance:    ${fmt(balance)}\n` +
+      `Earned so far:     +${fmt(earnedSoFar)}\n` +
+      `Early exit penalty (10%): -${fmt(penalty)}\n` +
+      `─────────────────────────────\n` +
+      `You receive:       ${fmt(finalAmount)}\n\n` +
+      `Confirm withdrawal?`
+    );
+    if(!confirmed) return;
+  } else {
+    finalAmount = balance + earnedSoFar;
+    const confirmed = confirm(
+      `Withdraw from Flexible Vault\n` +
+      `─────────────────────────────\n` +
+      `Deposited balance: ${fmt(balance)}\n` +
+      `Earned yield:      +${fmt(earnedSoFar)}\n` +
+      `─────────────────────────────\n` +
+      `Total you receive: ${fmt(finalAmount)}\n\n` +
+      `Confirm withdrawal?`
+    );
+    if(!confirmed) return;
+  }
+
+  // Send TX if wallet connected
+  if(typeof window.ethereum !== 'undefined') {
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const sender = accounts[0];
+      await ensureArcNetwork();
+      // Withdrawal: send 0 value TX as proof (real vault contract would handle this)
+      await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [{ from: sender, to: sender, value: '0x0', chainId: ARC_CHAIN_ID }]
+      });
+    } catch(e) {
+      if(e.message?.includes('rejected')) return; // user cancelled
+      console.warn('Withdraw TX:', e.message);
+    }
+  }
+
+  // Update balance display
+  if(type === 'flex') {
+    vault.flex.balance = 0;
+    const el = document.getElementById('flexBalance');
+    const sub = document.getElementById('flexBalanceSub');
+    if(el) el.textContent = '$0.00';
+    if(sub) sub.textContent = '0.000000 USDC';
+  } else {
+    vault.locked.balance = 0;
+    const el = document.getElementById('lockedBalance');
+    const sub = document.getElementById('lockedBalanceSub');
+    if(el) el.textContent = '$0.00';
+    if(sub) sub.innerHTML = 'No active lock';
+  }
+
+  updateProjections();
+  _addVaultTx(
+    'wit',
+    type === 'flex' ? 'Flexible Vault Withdrawal' : 'Locked Early Withdrawal',
+    finalAmount,
+    'var(--warn)'
+  );
+}
+
+// Add tx to feed — with accurate amount display
+function _addVaultTx(iconType, desc, amount, color, txHash) {
+  const feed = document.getElementById('vaultTxFeed');
+  if(!feed) return;
+  const icons = { dep:'⬇', wit:'⬆', ear:'✦' };
+  const now = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  const sign = iconType === 'wit' ? '-' : '+';
+  // Format amount with proper decimals
+  const fmtAmt = parseFloat(amount).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:6});
+  const div = document.createElement('div');
+  div.className = 'vault-tx';
+  div.style.animation = 'fadeUp 0.4s ease both';
+  div.innerHTML = `
+    <div class="vault-tx-icon ${iconType}">${icons[iconType]||'⬇'}</div>
+    <div class="vault-tx-meta">
+      <div class="vault-tx-desc">${desc}</div>
+      <div class="vault-tx-date">${now}${txHash ? ' · <a href="https://testnet.arcscan.app/tx/'+txHash+'" target="_blank" style="color:var(--accent2)">'+txHash.slice(0,10)+'... ↗</a>' : ''}</div>
+    </div>
+    <div class="vault-tx-amount" style="color:${color}">${sign}$${fmtAmt} <span style="font-size:10px;color:var(--text3)">USDC</span></div>`;
+  feed.insertBefore(div, feed.firstChild);
+}
 </script>
-</body>
 </html>
