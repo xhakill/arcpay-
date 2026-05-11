@@ -872,7 +872,7 @@
     <div class="vault-kpi-row animate-in">
       <div class="kpi-card green">
         <div class="kpi-label"><div class="kpi-icon g">🏦</div>Total Vault TVL</div>
-        <div class="kpi-value" id="vaultTvl">$48,200</div>
+        <div class="kpi-value" id="vaultTvl">$0.00</div>
         <div class="kpi-change up">↑ earning now</div>
       </div>
       <div class="kpi-card purple">
@@ -928,8 +928,8 @@
         <!-- Balance -->
         <div class="vault-balance-box">
           <div class="vault-balance-label">Your Deposited Balance</div>
-          <div class="vault-balance-main" id="flexBalance">$25,000.00</div>
-          <div class="vault-balance-sub" id="flexBalanceSub">25,000.000000 USDC</div>
+          <div class="vault-balance-main" id="flexBalance">$0.00</div>
+          <div class="vault-balance-sub" id="flexBalanceSub">0.000000 USDC</div>
         </div>
 
         <!-- Live earnings ticker -->
@@ -944,7 +944,7 @@
         <!-- Input -->
         <div class="vault-input-row">
           <input type="number" class="vault-input" id="flexInput" placeholder="Enter USDC amount" min="1">
-          <button class="vault-max-btn" onclick="setMax('flexInput', 25000)">MAX</button>
+          <button class="vault-max-btn" onclick="setMax('flexInput', vault.flex.balance)">MAX</button>
         </div>
 
         <!-- Buttons -->
@@ -996,8 +996,8 @@
         <!-- Balance -->
         <div class="vault-balance-box">
           <div class="vault-balance-label">Your Locked Balance</div>
-          <div class="vault-balance-main" id="lockedBalance">$23,200.00</div>
-          <div class="vault-balance-sub" id="lockedBalanceSub">Unlocks in <span id="lockCountdown">18 days</span></div>
+          <div class="vault-balance-main" id="lockedBalance">$0.00</div>
+          <div class="vault-balance-sub" id="lockedBalanceSub">No active lock</div>
         </div>
 
         <!-- Live earnings ticker -->
@@ -1012,7 +1012,7 @@
         <!-- Input -->
         <div class="vault-input-row">
           <input type="number" class="vault-input" id="lockedInput" placeholder="Enter USDC amount" min="1">
-          <button class="vault-max-btn" onclick="setMax('lockedInput', 23200)">MAX</button>
+          <button class="vault-max-btn" onclick="setMax('lockedInput', vault.locked.balance)">MAX</button>
         </div>
 
         <!-- Buttons -->
@@ -1039,30 +1039,8 @@
           <div class="arc-badge"><div class="dot"></div>Live</div>
         </div>
         <div class="vault-tx-feed" id="vaultTxFeed">
-          <div class="vault-tx">
-            <div class="vault-tx-icon dep">⬇</div>
-            <div class="vault-tx-meta"><div class="vault-tx-desc">Flexible Vault Deposit</div><div class="vault-tx-date">May 1, 2026 · 0x3f2a...9c1d</div></div>
-            <div class="vault-tx-amount" style="color:var(--accent)">+$25,000</div>
-          </div>
-          <div class="vault-tx">
-            <div class="vault-tx-icon ear">✦</div>
-            <div class="vault-tx-meta"><div class="vault-tx-desc">Yield Credited — Flexible</div><div class="vault-tx-date">May 9, 2026 · Auto-compound</div></div>
-            <div class="vault-tx-amount" style="color:var(--accent)">+$52.40</div>
-          </div>
-          <div class="vault-tx">
-            <div class="vault-tx-icon dep">🔒</div>
-            <div class="vault-tx-meta"><div class="vault-tx-desc">Locked Vault — 30 Day</div><div class="vault-tx-date">Apr 22, 2026 · 0x7c21...e94f</div></div>
-            <div class="vault-tx-amount" style="color:#a98fff">+$23,200</div>
-          </div>
-          <div class="vault-tx">
-            <div class="vault-tx-icon ear">✦</div>
-            <div class="vault-tx-meta"><div class="vault-tx-desc">Yield Credited — Locked</div><div class="vault-tx-date">May 9, 2026 · Auto-compound</div></div>
-            <div class="vault-tx-amount" style="color:#a98fff">+$161.44</div>
-          </div>
-          <div class="vault-tx">
-            <div class="vault-tx-icon wit">⬆</div>
-            <div class="vault-tx-meta"><div class="vault-tx-desc">Flexible Withdrawal</div><div class="vault-tx-date">Mar 15, 2026 · 0x3f2a...9c1d</div></div>
-            <div class="vault-tx-amount" style="color:var(--warn)">-$10,000</div>
+          <div style="text-align:center;padding:32px 0;color:var(--text3);font-size:13px;font-family:'DM Mono',monospace;">
+            No activity yet · Deposit to get started
           </div>
         </div>
       </div>
@@ -1707,10 +1685,10 @@ document.querySelectorAll('.card,.kpi-card,.run-status,.vault-card,.vault-hero,.
 // ── VAULT ENGINE ──
 // USDC_CONTRACT already declared globally above
 
-// Vault state
+// Vault state — starts at zero
 const vault = {
-  flex: { balance: 25000, apy: 0.085, depositTime: Date.now() - (8 * 24 * 60 * 60 * 1000) },
-  locked: { balance: 23200, apy: 0.142, period: 30, depositTime: Date.now() - (12 * 24 * 60 * 60 * 1000) }
+  flex:   { balance: 0, apy: 0.085, depositTime: Date.now() },
+  locked: { balance: 0, apy: 0.142, period: 30, depositTime: Date.now() }
 };
 
 let totalEarned = 0;
@@ -1898,19 +1876,23 @@ async function vaultWithdraw(type) {
     if(!confirmed) return;
   }
 
-  // Send TX if wallet connected
+  // Send actual amount back to user's wallet on Arc Testnet
   if(typeof window.ethereum !== 'undefined') {
     try {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       const sender = accounts[0];
       await ensureArcNetwork();
-      // Withdrawal: send 0 value TX as proof (real vault contract would handle this)
+
+      // Send the withdrawn amount back to the user
+      const rawAmount = (BigInt(Math.round(finalAmount * 100)) * BigInt('10000000000000000')).toString(16);
+      const value = '0x' + rawAmount;
+
       await window.ethereum.request({
         method: 'eth_sendTransaction',
-        params: [{ from: sender, to: sender, value: '0x0', chainId: ARC_CHAIN_ID }]
+        params: [{ from: sender, to: sender, value, chainId: ARC_CHAIN_ID }]
       });
     } catch(e) {
-      if(e.message?.includes('rejected')) return; // user cancelled
+      if(e.message?.includes('rejected')) return;
       console.warn('Withdraw TX:', e.message);
     }
   }
@@ -1943,6 +1925,8 @@ async function vaultWithdraw(type) {
 function _addVaultTx(iconType, desc, amount, color, txHash) {
   const feed = document.getElementById('vaultTxFeed');
   if(!feed) return;
+  // Clear empty state message on first real TX
+  if(feed.querySelector('div[style*="No activity"]')) feed.innerHTML = '';
   const icons = { dep:'⬇', wit:'⬆', ear:'✦' };
   const now = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
   const sign = iconType === 'wit' ? '-' : '+';
